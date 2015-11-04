@@ -31,8 +31,7 @@ public class Objeto {
 		this.id = id;
 		this.posicionObjeto = posicionObjeto;
 
-		hs = new HojaSprites("/imagenes/hojasPersonajes/objetos.png",
-				Constantes.LADO_SPRITE, false);
+		hs = new HojaSprites("/imagenes/hojasPersonajes/objetos.png", Constantes.LADO_SPRITE, false);
 
 	}
 
@@ -40,13 +39,12 @@ public class Objeto {
 		animar();
 		actualizarColisiones(posicionX, posicionY);
 		movimiento(posicionObjeto);
-		
+
 	}
 
 	private void actualizarColisiones(final int posicionX, final int posicionY) {
 
-		colisionObjeto = new Rectangle(posicionObjeto.x - posicionX,
-				posicionObjeto.y - posicionY - 10, 11, 11);
+		colisionObjeto = new Rectangle(posicionObjeto.x - posicionX, posicionObjeto.y - posicionY - 10, 5, 5);
 
 	}
 
@@ -55,11 +53,9 @@ public class Objeto {
 			final Rectangle area = mapa.areasColision.get(r);
 
 			int origenX = area.x;
-			int origenY = area.y + velocidadY * (int) velocidad - 2
-					* (int) velocidad;
+			int origenY = area.y + velocidadY * (int) velocidad - 2 * (int) velocidad;
 
-			final Rectangle areaFutura = new Rectangle(origenX, origenY,
-					Constantes.LADO_SPRITE, Constantes.LADO_SPRITE);
+			final Rectangle areaFutura = new Rectangle(origenX, origenY, Constantes.LADO_SPRITE, Constantes.LADO_SPRITE);
 
 			if (colisionObjeto.intersects(areaFutura)) {
 				return true;
@@ -112,14 +108,14 @@ public class Objeto {
 	}
 
 	public void dibujar(Graphics g, int posicionX, int posicionY) {
-		g.drawImage(imagenActual, posicionObjeto.x - posicionX - 10,
-				posicionObjeto.y - posicionY - 20, null);
+		g.drawImage(imagenActual, posicionObjeto.x - posicionX - 10, posicionObjeto.y - posicionY - 25, null);
 		// if (colisionObjeto != null) {
-		// g.drawRect(colisionObjeto.x, colisionObjeto.y, 11, 11);
+		// g.drawRect(colisionObjeto.x, colisionObjeto.y, 5, 5);
 		// }
 
 	}
-	public Rectangle obtenerColision(){
+
+	public Rectangle obtenerColision() {
 		return colisionObjeto;
 	}
 }

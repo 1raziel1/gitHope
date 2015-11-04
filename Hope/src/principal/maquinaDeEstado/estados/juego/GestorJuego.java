@@ -1,6 +1,5 @@
 package principal.maquinaDeEstado.estados.juego;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class GestorJuego implements EstadoJuego {
 	ArrayList<Enemigo> enemigos = new ArrayList<Enemigo>();
 
 	// Objeto corazon = new Objeto(mapa, 0, punto);
-	ArrayList<Objeto> corazon=new ArrayList<Objeto>();
+	ArrayList<Objeto> corazon = new ArrayList<Objeto>();
 
 	public GestorJuego() {
 		// System.out.println(audio.getAbsolutePath());
@@ -54,7 +53,7 @@ public class GestorJuego implements EstadoJuego {
 	private ArrayList<Enemigo> generadorEnemigos() {
 
 		enemigos.clear();
-		
+
 		for (int y = 0; y < this.mapa.obtenerAlto(); y++) {
 			for (int x = 0; x < this.mapa.obtenerAncho(); x++) {
 				int puntoX = x * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionX() + MARGEN_X + MARGEN_X;
@@ -70,16 +69,16 @@ public class GestorJuego implements EstadoJuego {
 				}
 			}
 		}
-		
+
 		return enemigos;
 	}
 
 	private void recargarJuego() {
 		final String ruta = "/mapas/" + mapa.obtenerSiguienteMapa();
 		iniciarMapa(ruta);
-		
+
 		iniciarJugador();
-		
+
 		generadorEnemigos();
 
 		// jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
@@ -101,22 +100,22 @@ public class GestorJuego implements EstadoJuego {
 		}
 		jugador.actualizar();
 		mapa.actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
-		if(!enemigos.isEmpty()){
+		if (!enemigos.isEmpty()) {
 			for (int i = 0; i < enemigos.size(); i++) {
 				enemigos.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 			}
 		}
-		if(!corazon.isEmpty()){
+		if (!corazon.isEmpty()) {
 			for (int i = 0; i < corazon.size(); i++) {
 				corazon.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
-				if(jugador.obtenerLIMITE_DERECHA().intersects(corazon.get(i).obtenerColision())||jugador.obtenerLIMITE_IZQUIERDA().intersects(corazon.get(i).obtenerColision())){
-					corazon.remove(i);//cojer corazon
+				if (jugador.obtenerLIMITE_DERECHA().intersects(corazon.get(i).obtenerColision())
+						|| jugador.obtenerLIMITE_IZQUIERDA().intersects(corazon.get(i).obtenerColision())) {
+					corazon.remove(i);// cojer corazon
 				}
 			}
 		}
 
 	}
-	
 
 	public void dibujar(Graphics g) {
 		mapa.dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
@@ -126,21 +125,18 @@ public class GestorJuego implements EstadoJuego {
 		for (int i = 0; i < enemigos.size(); i++) {
 			if (enemigos.get(i).estaVivo()) {
 				enemigos.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
-			}else{
-				System.out.println(i);
-				Point p=new Point(enemigos.get(i).obtenerPosicion());
-				corazon.add(new Objeto(mapa,i,p));
+			} else {
+				Point p = new Point(enemigos.get(i).obtenerPosicion());
+				corazon.add(new Objeto(mapa, 0, p));
 				enemigos.remove(i);
 				i--;
 			}
 
 		}
 		for (int i = 0; i < corazon.size(); i++) {
-			System.out.println("hola");
 			corazon.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 
 		}
-		
 
 		//
 		// } else {
@@ -149,14 +145,18 @@ public class GestorJuego implements EstadoJuego {
 		//
 		// }
 
-//		g.setColor(Color.RED);
-//		g.drawString("X = " + jugador.obtenerPosicionX(), 20, 20);
-//		g.drawString("Y = " + jugador.obtenerPosicionY(), 20, 30);
-//		g.drawString("Siguiente mapa: " + mapa.obtenerSiguienteMapa(), 20, 100);
-//		g.drawString("Cordenadas Salida X: " + mapa.obtenerPuntoSalida().getX(), 20, 110);
-//		g.drawString("Cordenadas Salida Y: " + mapa.obtenerPuntoSalida().getY(), 20, 120);
-//
-//		g.fillRect(mapa.obtenerZonaSalida().x, mapa.obtenerZonaSalida().y, mapa.obtenerZonaSalida().width,
-//				mapa.obtenerZonaSalida().height);
+		// g.setColor(Color.RED);
+		// g.drawString("X = " + jugador.obtenerPosicionX(), 20, 20);
+		// g.drawString("Y = " + jugador.obtenerPosicionY(), 20, 30);
+		// g.drawString("Siguiente mapa: " + mapa.obtenerSiguienteMapa(), 20,
+		// 100);
+		// g.drawString("Cordenadas Salida X: " +
+		// mapa.obtenerPuntoSalida().getX(), 20, 110);
+		// g.drawString("Cordenadas Salida Y: " +
+		// mapa.obtenerPuntoSalida().getY(), 20, 120);
+		//
+		// g.fillRect(mapa.obtenerZonaSalida().x, mapa.obtenerZonaSalida().y,
+		// mapa.obtenerZonaSalida().width,
+		// mapa.obtenerZonaSalida().height);
 	}
 }

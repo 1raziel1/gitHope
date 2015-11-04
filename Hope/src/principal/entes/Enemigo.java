@@ -15,7 +15,7 @@ public class Enemigo {
 	private boolean estaVivo = true;
 	private int salud = 2;
 	private int saludAnterior = salud;
-	private boolean objeto=false;
+	private boolean objeto = false;
 	private double velocidad = 1;
 
 	private int estadoAnimacion = 0;
@@ -248,14 +248,14 @@ public class Enemigo {
 		// colisionEnemigo.get(i).height);
 
 	}
-	
-	public Point obtenerPosicion(){
-		
-		int x=posicionInicial.x;
-		int y=posicionInicial.y;
-		
-		return new Point(x,y);
-		
+
+	public Point obtenerPosicion() {
+
+		int x = posicionInicial.x;
+		int y = posicionInicial.y + 5;
+
+		return new Point(x, y);
+
 	}
 
 	public ArrayList<Rectangle> obtenerColisiones() {
@@ -282,13 +282,14 @@ public class Enemigo {
 	public boolean obtenerColisionEnemiga() {
 		return colisionJugador;
 	}
-	public boolean obtenerObjeto(){
-		
-		
+
+	public boolean obtenerObjeto() {
+
 		return objeto;
 	}
-	public void cambiarObjeto(boolean o){
-		objeto=o;
+
+	public void cambiarObjeto(boolean o) {
+		objeto = o;
 	}
 
 }

@@ -22,6 +22,7 @@ public class Jugador {
 	private int salud = 10;
 
 	private int salto = 3;
+	private int decrementoSalto = 0;
 
 	private boolean enemigoGolpeado = false;
 	private int indiceEnemigoGolpeado = 0;
@@ -34,6 +35,7 @@ public class Jugador {
 
 	private boolean invulnerable = false;
 	private boolean saltando = false;
+	private boolean callendo = false;
 	private boolean agachado = false;
 
 	private int capacidadSalto = 48 * 2;
@@ -233,30 +235,34 @@ public class Jugador {
 				}
 				// saltando
 			} else if (saltando) {
+				if (callendo) {
+					switch (animacion) {
+					case 0:
+						estado = 3;
+						break;
+					case 1:
+						estado = 4;
+						break;
+					case 2:
+						estado = 3;
+						break;
+					case 3:
+						estado = 4;
+						break;
+					case 4:
+						estado = 3;
+						break;
+					case 5:
+						estado = 4;
+						break;
+					}
+					if (GestorControles.teclado.abajo.estaPulsada()) {
+						estado = 5;// atacar
+					}
+				} else {
+					estado = 8;
+				}
 
-				switch (animacion) {
-				case 0:
-					estado = 3;
-					break;
-				case 1:
-					estado = 4;
-					break;
-				case 2:
-					estado = 3;
-					break;
-				case 3:
-					estado = 4;
-					break;
-				case 4:
-					estado = 3;
-					break;
-				case 5:
-					estado = 4;
-					break;
-				}
-				if (GestorControles.teclado.abajo.estaPulsada()) {
-					estado = 5;// atacar
-				}
 			} else if (enColisionAgua(2)) {
 				if (!enMovimiento) {
 					switch (animacion) {
@@ -362,7 +368,8 @@ public class Jugador {
 		if (GestorControles.teclado.abajo.estaPulsada()) {
 			agachado = true;
 		}
-		if (GestorControles.teclado.arriba.estaPulsada() || GestorControles.teclado.espacio.estaPulsada()) {
+		if (GestorControles.teclado.arriba.estaPulsada() || GestorControles.teclado.espacio.estaPulsada()
+				|| invulnerable) {
 			agachado = false;
 		}
 
@@ -395,6 +402,7 @@ public class Jugador {
 
 		if (enColisionAbajo(2) || enColisionAgua(2)) {
 			velocidadY = 0;
+			decrementoSalto = 0;
 			saltando = false;
 			salto = (int) posicionY;
 			recorridoSalto = (int) posicionY;
@@ -406,20 +414,45 @@ public class Jugador {
 			agachado = false;
 		}
 		if (!invulnerable) {
+
 			if (GestorControles.teclado.espacio.estaPulsada() && recorridoSalto >= posicionY) {
 				recorridoSalto = (int) posicionY;
 
 				if (salto - capacidadSalto <= (int) posicionY && salto >= 0) {
+					switch (decrementoSalto) {
+					case 0:
+						velocidadY = -4;
+						break;
+					case 1:
+						velocidadY = -3;
+						break;
+					case 2:
+						velocidadY = -2;
+						break;
+					}
+
+					if (!(salto - capacidadSalto / 2 <= (int) posicionY)) {
+						decrementoSalto = 1;
+					}
+					if (!(salto - (capacidadSalto / 2) - (capacidadSalto / 4) <= (int) posicionY)) {
+						decrementoSalto = 2;
+					}
+
 					// velocidad de salto
-					velocidadY = -4;
 					if (enColisionArriba(velocidadY)) {
 						salto = -1;
 					}
 				} else {
+					decrementoSalto = 0;
 					salto = -1;
 					velocidadY = 2;
 				}
 			}
+		}
+		if (velocidadY > 0) {
+			callendo = true;
+		} else {
+			callendo = false;
 		}
 
 		return velocidadY;
@@ -427,6 +460,7 @@ public class Jugador {
 
 	private void mover(final int velocidadX, int velocidadY) {
 		enMovimiento = true;
+
 		cambiarDireccionEstado(velocidadX, velocidadY);
 		if (agachado && !saltando) {
 			velocidad = 0.5;
@@ -619,7 +653,9 @@ public class Jugador {
 		if (enemigoGolpeado) {
 			if (golpeandoEnemigo <= 3) {
 				velocidadY = -4;
+
 				mover(velocidadX, velocidadY);
+
 			}
 
 			if (GestorPrincipal.obtenerAps() % frecuencia == 0) {
@@ -662,6 +698,7 @@ public class Jugador {
 			}
 		}
 		if (invulnerable) {
+			agachado = false;
 
 			if (estadoDano <= 3) {
 				velocidadX = estadoDanoDireccion;
@@ -791,6 +828,7 @@ public class Jugador {
 	public Rectangle obtenerLIMITE_DERECHA() {
 		return LIMITE_DERECHA;
 	}
+
 	public Rectangle obtenerLIMITE_IZQUIERDA() {
 		return LIMITE_IZQUIERDA;
 	}
