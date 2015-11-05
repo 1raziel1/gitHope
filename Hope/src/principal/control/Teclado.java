@@ -42,6 +42,7 @@ public class Teclado implements KeyListener {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_W:
 			arriba.teclaLiberada();
+			System.out.println("liberada");
 			break;
 		case KeyEvent.VK_S:
 			abajo.teclaLiberada();

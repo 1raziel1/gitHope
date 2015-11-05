@@ -15,9 +15,7 @@ public class GestorJuego implements EstadoJuego {
 
 	private final int MARGEN_X = Constantes.ANCHO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
 	private final int MARGEN_Y = Constantes.ALTO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
-	Point punto = new Point(400, 450);
-	Point puntoEnemigo = new Point(450, 450);
-	Point puntoEnemigo2 = new Point(600, 450);
+
 	Mapa mapa;
 	// File audio = new File("recursos/audio/temaPrincipalHope.wav");
 
@@ -75,6 +73,7 @@ public class GestorJuego implements EstadoJuego {
 
 	private void recargarJuego() {
 		final String ruta = "/mapas/" + mapa.obtenerSiguienteMapa();
+		
 		iniciarMapa(ruta);
 
 		iniciarJugador();
@@ -100,11 +99,13 @@ public class GestorJuego implements EstadoJuego {
 		}
 		jugador.actualizar();
 		mapa.actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
+		
 		if (!enemigos.isEmpty()) {
 			for (int i = 0; i < enemigos.size(); i++) {
 				enemigos.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 			}
 		}
+		
 		if (!corazon.isEmpty()) {
 			for (int i = 0; i < corazon.size(); i++) {
 				corazon.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());

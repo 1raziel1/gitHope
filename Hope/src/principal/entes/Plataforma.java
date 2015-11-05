@@ -65,32 +65,40 @@ public class Plataforma {
 
 	}
 
-	private void movimiento(Point posicionEnemigo) {
-		double x = posicionEnemigo.x;
-		double y = posicionEnemigo.y;
-
-		// if (colisionAbajo(velocidadY)) {
-		// velocidadY = 0;
-		// } else {
-		// velocidadY = 1;
-		// }
-		// if (velocidadY >= 1 && !colisionAbajo(velocidadY)) {
-		// y += (double) velocidadY * velocidad;
-		// }
-		// if (colisionDerecha(velocidadX)) {
-		// velocidadX = -1;
-		// }
-		// if ((velocidadX)) {
-		// velocidadX = 1;
-		// }
+	private void movimiento(Point posicionPlataforma) {
+		double x = posicionPlataforma.x;
+		double y = posicionPlataforma.y;
+		//cuando llegue al final , se cambiara el punto final por el inicial para que cambie la direccion
+		if(posicionInicial.x==posicionFinal.x){
+			int temp=posicionInicial.x;
+			posicionInicial.y=posicionFinal.x;
+			posicionFinal.x=temp;
+		}else if(posicionInicial.x>=posicionFinal.x){
+			velocidadX = 1;
+		}else if(posicionInicial.x<posicionFinal.x){
+			velocidadX = -1;
+		}
+		
+		
+		if(posicionInicial.y==posicionFinal.y){
+			int temp=posicionInicial.y;
+			posicionInicial.y=posicionFinal.y;
+			posicionFinal.y=temp;
+		}else if(posicionInicial.y>=posicionFinal.y){
+			velocidadY = 1;
+		}else if(posicionInicial.y<posicionFinal.y){
+			velocidadY = -1;
+		}
+		//limitador  de movimiento.
 		if (limitador >= 2) {
 			limitador = 0;
 			x += (double) velocidadX * velocidad;
+			y += (double) velocidadY * velocidad;
 		} else {
 			limitador++;
 		}
 
-		posicionEnemigo.setLocation(x, y);
+		posicionPlataforma.setLocation(x, y);
 	}
 
 	private void actualizarColisiones(final int posicionX, final int posicionY) {
