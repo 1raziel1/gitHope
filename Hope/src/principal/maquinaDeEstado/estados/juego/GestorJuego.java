@@ -8,6 +8,7 @@ import principal.Constantes;
 import principal.entes.Enemigo;
 import principal.entes.Jugador;
 import principal.entes.Objeto;
+import principal.entes.Plataforma;
 import principal.mapas.Mapa;
 import principal.maquinaDeEstado.EstadoJuego;
 
@@ -23,6 +24,8 @@ public class GestorJuego implements EstadoJuego {
 	Jugador jugador;
 
 	ArrayList<Enemigo> enemigos = new ArrayList<Enemigo>();
+	
+	ArrayList<Plataforma> plataformas = new ArrayList<Plataforma>();
 
 	// Objeto corazon = new Objeto(mapa, 0, punto);
 	ArrayList<Objeto> corazon = new ArrayList<Objeto>();
@@ -34,6 +37,8 @@ public class GestorJuego implements EstadoJuego {
 		iniciarJugador();
 
 		generadorEnemigos();
+		
+		generadorPlataformas();
 		// try {
 		// Clip sonido = AudioSystem.getClip();
 		// try {
@@ -70,6 +75,37 @@ public class GestorJuego implements EstadoJuego {
 
 		return enemigos;
 	}
+	private ArrayList<Plataforma> generadorPlataformas() {
+
+		plataformas.clear();
+		String temp="";
+		Point puntoTemp= new Point(0, 0);
+		//cada dos puntos se creara una plataforma que se desplaza de punto a punto
+		for (int y = 0; y < this.mapa.obtenerAlto(); y++) {
+			for (int x = 0; x < this.mapa.obtenerAncho(); x++) {
+				int puntoX = x * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionX() + MARGEN_X + MARGEN_X;
+				int puntoY = y * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionY() + MARGEN_Y + MARGEN_Y
+						+ MARGEN_Y;
+				
+				if (mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].length()==2){
+					
+					if(mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].equals(temp)){
+						
+						final Point punto = new Point(puntoX, puntoY);
+						final Plataforma p = new Plataforma(mapa, puntoTemp,punto);
+
+						plataformas.add(p);
+						
+					}
+					puntoTemp = new Point(puntoX, puntoY);
+					temp=mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()];				
+					
+				}
+			}
+		}
+
+		return plataformas;
+	}
 
 	private void recargarJuego() {
 		final String ruta = "/mapas/" + mapa.obtenerSiguienteMapa();
@@ -79,13 +115,14 @@ public class GestorJuego implements EstadoJuego {
 		iniciarJugador();
 
 		generadorEnemigos();
+		generadorPlataformas();
 
 		// jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
 		// jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
 	}
 
 	private void iniciarJugador() {
-		jugador = new Jugador(mapa, enemigos);
+		jugador = new Jugador(mapa, enemigos, plataformas);
 
 	}
 
@@ -103,6 +140,12 @@ public class GestorJuego implements EstadoJuego {
 		if (!enemigos.isEmpty()) {
 			for (int i = 0; i < enemigos.size(); i++) {
 				enemigos.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
+			}
+		}
+		
+		if(!plataformas.isEmpty()){
+			for (int i = 0; i < plataformas.size(); i++) {
+				plataformas.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 			}
 		}
 		
@@ -137,6 +180,10 @@ public class GestorJuego implements EstadoJuego {
 		for (int i = 0; i < corazon.size(); i++) {
 			corazon.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 
+		}
+		
+		for (int i = 0; i < plataformas.size(); i++) {
+			plataformas.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 		}
 
 		//

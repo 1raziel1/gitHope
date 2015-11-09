@@ -37,18 +37,22 @@ public class Plataforma {
 	private int limitador = 0;
 	Jugador jugador;
 
-	private final int ANCHO = 11;
-	private final int ALTO = 11;
+	private final int ANCHO = 15;
+	private final int ALTO = 2;
 	private int velocidadX = 1;
 	private int velocidadY = 1;
-	private Point posicionInicial = new Point(600, 450);
-	private Point posicionFinal = new Point(600, 600);
+	private Point posicionInicial;
+	private Point posicionFinal;
+	private Point posicionPlataforma;
 	private boolean colisionJugador = false;
+
 
 	public Plataforma(Mapa mapa, Point posicionInicial, Point posicionFinal) {
 
 		this.posicionInicial = posicionInicial;
+		this.posicionFinal=posicionFinal;
 		this.mapa = mapa;
+		this.posicionPlataforma=new Point(posicionInicial.x,posicionInicial.y);
 
 		hs = new HojaSprites("/imagenes/hojasPersonajes/ojo.png",
 				Constantes.LADO_SPRITE, false);
@@ -59,7 +63,7 @@ public class Plataforma {
 
 		actualizarColisiones(posicionX, posicionY);
 
-		movimiento(posicionInicial);
+		movimiento(posicionPlataforma);
 
 		animar();
 
@@ -69,35 +73,34 @@ public class Plataforma {
 		double x = posicionPlataforma.x;
 		double y = posicionPlataforma.y;
 		//cuando llegue al final , se cambiara el punto final por el inicial para que cambie la direccion
-		if(posicionInicial.x==posicionFinal.x){
-			int temp=posicionInicial.x;
-			posicionInicial.y=posicionFinal.x;
-			posicionFinal.x=temp;
-		}else if(posicionInicial.x>=posicionFinal.x){
-			velocidadX = 1;
-		}else if(posicionInicial.x<posicionFinal.x){
-			velocidadX = -1;
-		}
-		
-		
-		if(posicionInicial.y==posicionFinal.y){
-			int temp=posicionInicial.y;
-			posicionInicial.y=posicionFinal.y;
-			posicionFinal.y=temp;
-		}else if(posicionInicial.y>=posicionFinal.y){
-			velocidadY = 1;
-		}else if(posicionInicial.y<posicionFinal.y){
-			velocidadY = -1;
-		}
-		//limitador  de movimiento.
-		if (limitador >= 2) {
-			limitador = 0;
-			x += (double) velocidadX * velocidad;
-			y += (double) velocidadY * velocidad;
-		} else {
-			limitador++;
-		}
 
+	
+		velocidadY=0;
+		if(posicionPlataforma.x==posicionFinal.x){
+			
+			int temp=posicionInicial.x;
+			posicionInicial.x=posicionFinal.x;
+			posicionFinal.x=temp;
+					
+		}else if(posicionPlataforma.x>posicionFinal.x){
+			velocidadX = -1;
+		}else{
+			velocidadX = 1;
+		}
+		
+		 System.out.println("vxPlat:"+velocidadX);
+
+		
+		//limitador  de movimiento.
+//		if (limitador >= 2) {
+//			limitador = 0;
+//			x += (double) velocidadX * velocidad;
+//			y += (double) velocidadY * velocidad;
+//		} else {
+//			limitador++;
+//		}
+		x += (double) velocidadX * velocidad;
+		y += (double) velocidadY * velocidad;
 		posicionPlataforma.setLocation(x, y);
 	}
 
@@ -106,8 +109,8 @@ public class Plataforma {
 			colisionPlataforma.clear();
 		}
 
-		Rectangle arriba = new Rectangle(posicionInicial.x - posicionX - 2,
-				posicionInicial.y - posicionY, ANCHO + 5, 2);
+		Rectangle arriba = new Rectangle(posicionPlataforma.x - posicionX - 2,
+				posicionPlataforma.y - posicionY, ANCHO + 5, ALTO);
 
 		colisionPlataforma.add(arriba);
 
@@ -139,36 +142,7 @@ public class Plataforma {
 
 		if (GestorPrincipal.obtenerAps() % frecuenciaAnimacion == 0) {
 
-			animacion++;
-			if (animacion >= limite) {
-				animacion = 0;
-			}
-			switch (animacion) {
-			case 0:
-				estadoAnimacion = 0;
-				break;
-			case 1:
-				estadoAnimacion = 1;
-				break;
-			case 2:
-				estadoAnimacion = 2;
-				break;
-			case 3:
-				estadoAnimacion = 2;
-				break;
-			case 4:
-				estadoAnimacion = 1;
-				break;
-			case 5:
-				estadoAnimacion = 0;
-				break;
-			}
-			if (golpeado) {
-				estadoAnimacion = 3;
-				if (animacion >= 2) {
-					golpeado = false;
-				}
-			}
+			estadoAnimacion=0;
 		}
 
 		determinarMovimiento();
@@ -195,18 +169,19 @@ public class Plataforma {
 	}
 
 	public void dibujar(Graphics g, int posicionX, int posicionY) {
-
-		g.drawImage(imagenActual, posicionInicial.x - posicionX - 10,
-				posicionInicial.y - posicionY - 20, null);
+//
+//		g.drawImage(imagenActual, posicionPlataforma.x - posicionX - 10,
+//				posicionPlataforma.y - posicionY - 20, null);
 
 		// g.setColor(Color.GREEN);
 		//
 		// for (int i = 0; i < colisionEnemigo.size(); i++)
-		// if (!colisionEnemigo.isEmpty())
-		// g.drawRect(colisionEnemigo.get(i).x, colisionEnemigo.get(i).y,
-		// colisionEnemigo.get(i).width,
-		// colisionEnemigo.get(i).height);
-
+		 if (!colisionPlataforma.isEmpty()){
+			 g.drawRect(colisionPlataforma.get(0).x, colisionPlataforma.get(0).y,
+					 colisionPlataforma.get(0).width,
+					 colisionPlataforma.get(0).height);
+		 }
+		
 	}
 
 	public ArrayList<Rectangle> obtenerColisiones() {
@@ -215,6 +190,9 @@ public class Plataforma {
 
 	public boolean obtenerColision() {
 		return colisionJugador;
+	}
+	public int obtenerVelocidadX(){
+		return velocidadX;
 	}
 
 }

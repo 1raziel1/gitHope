@@ -43,6 +43,8 @@ public class Jugador {
 	private int direccion;
 
 	private boolean enMovimiento;
+	private boolean enPlataforma=false;
+	private boolean pulsando=false;
 
 	private HojaSprites hs;
 
@@ -70,8 +72,11 @@ public class Jugador {
 	private int estado;
 	int velocidadX = 0;
 	int velocidadY = 0;
+	private int velocidadPlataforma=0;
 	private Enemigo enemigo;
 	private ArrayList<Enemigo> enemigos = new ArrayList<Enemigo>();
+	private ArrayList<Plataforma> plataformas = new ArrayList<Plataforma>();
+
 
 	private ArrayList<Rectangle> colisionHabilidades = new ArrayList<Rectangle>();
 
@@ -93,7 +98,7 @@ public class Jugador {
 		this.enemigos = enemigos;
 	}
 
-	public Jugador(Mapa mapa, Enemigo enemigo) {
+	public Jugador(Mapa mapa, ArrayList<Enemigo> enemigos, ArrayList<Plataforma> plataformas) {
 		posicionX = mapa.obtenerPosicionInicial().x;
 		posicionY = mapa.obtenerPosicionInicial().y;
 
@@ -108,9 +113,12 @@ public class Jugador {
 		estado = 0;
 
 		this.mapa = mapa;
-		this.enemigo = enemigo;
+		this.enemigos = enemigos;
+		this.plataformas=plataformas;
 	}
 
+	
+	
 	public Jugador(Mapa mapa) {
 		posicionX = mapa.obtenerPosicionInicial().x;
 		posicionY = mapa.obtenerPosicionInicial().y;
@@ -133,7 +141,12 @@ public class Jugador {
 		enMovimiento = false;
 		determinarDireccion();
 		animar();
+		if(GestorControles.teclado.izquierda.estaPulsada() || GestorControles.teclado.derecha.estaPulsada()){
+			pulsando=true;
 
+		}else{
+			pulsando=false;
+		}
 		atacar();
 
 		if (!enemigos.isEmpty()) {
@@ -331,7 +344,7 @@ public class Jugador {
 						estado = 7;
 						break;
 					}
-				} else {// normal
+				} else if(pulsando){// normal
 					switch (animacion) {
 					case 0:
 						estado = 1;
@@ -365,7 +378,7 @@ public class Jugador {
 		final int velocidadX = evaluarVelocidadX();
 		final int velocidadY = evaluarVelocidadY();
 
-		if (GestorControles.teclado.abajo.estaPulsada()) {
+		if (GestorControles.teclado.abajo.estaPulsada()){
 			agachado = true;
 		}
 		if (GestorControles.teclado.arriba.estaPulsada() || GestorControles.teclado.espacio.estaPulsada()
@@ -378,9 +391,9 @@ public class Jugador {
 		}
 		if ((velocidadX != 0 && velocidadY == 0) || (velocidadX == 0 && velocidadY != 0)) {
 			mover(velocidadX, velocidadY);
+			
 		} else {
 			mover(velocidadX, velocidadY);
-
 		}
 	}
 
@@ -394,13 +407,27 @@ public class Jugador {
 				velocidadX = 1;
 			}
 		}
+		if(enPlataforma){
+	
+
+			System.out.println("vx0:"+velocidadX);
+			velocidadX=velocidadX+plataformas.get(0).obtenerVelocidadX();
+			
+			System.out.println("vx:"+velocidadX);
+		}
 
 		return velocidadX;
 	}
 
 	private int evaluarVelocidadY() {
+		
+		if(enColisionPlataformaAbajo(2)){
+			enPlataforma=true;
+		}else{
+			enPlataforma=false;
+		}
 
-		if (enColisionAbajo(2) || enColisionAgua(2)) {
+		if (enColisionAbajo(2) || enColisionAgua(2) || enPlataforma) {
 			velocidadY = 0;
 			decrementoSalto = 0;
 			saltando = false;
@@ -454,6 +481,7 @@ public class Jugador {
 		} else {
 			callendo = false;
 		}
+		
 
 		return velocidadY;
 	}
@@ -484,6 +512,26 @@ public class Jugador {
 
 		} else {
 			enMovimiento = false;
+		}
+
+	}
+	private void moverPlataforma(final int velocidadX, int velocidadY) {
+	
+
+		
+		if (!fueraMapa(velocidadX, velocidadY)) {
+			if (velocidadX <= -1 && !enColisionIzquierda(velocidadX)) {
+				posicionX += velocidadX * velocidad;
+			}
+			if (velocidadX >= 1 && !enColisionDerecha(velocidadX)) {
+				posicionX += velocidadX * velocidad;
+			}
+			if (velocidadY <= -1 && !enColisionArriba(velocidadY)) {
+				posicionY += velocidadY * velocidad;
+			}
+			if (velocidadY >= 1 && !enColisionAbajo(velocidadY)) {
+				posicionY += velocidadY * velocidad;
+			}
 		}
 
 	}
@@ -588,6 +636,26 @@ public class Jugador {
 				final Rectangle areaFutura = new Rectangle(origenX, origenY, e.width, e.height);
 				if (LIMITE_ABAJO.intersects(areaFutura)) {
 					indiceEnemigoGolpeado = arrayene;
+					return true;
+				}
+			}
+
+		}
+
+		return false;
+	}
+	private boolean enColisionPlataformaAbajo(int velocidadY) {
+		for (int arrayene = 0; arrayene < plataformas.size(); arrayene++) {
+			for (int ene = 0; ene < plataformas.get(arrayene).obtenerColisiones().size(); ene++) {
+
+				final Rectangle e = plataformas.get(arrayene).obtenerColisiones().get(ene);
+
+				int origenX = e.x;
+
+				int origenY = e.y + velocidadY * (int) velocidad - 5 * (int) velocidad;
+
+				final Rectangle areaFutura = new Rectangle(origenX, origenY, e.width, e.height);
+				if (LIMITE_ABAJO.intersects(areaFutura)) {
 					return true;
 				}
 			}
@@ -714,6 +782,7 @@ public class Jugador {
 					invulnerable = false;
 					velocidadX = 0;
 					velocidadY = 0;
+//					direccion=estadoDanoDireccion;//123
 				}
 			}
 
@@ -780,7 +849,7 @@ public class Jugador {
 		} else if (direccion <= 3) {
 			direccion += 4;
 		}
-
+	
 		imagenActual = hs.obtenerSprite(direccion, estado).obtenerImagen();
 
 	}
@@ -836,5 +905,6 @@ public class Jugador {
 	public Rectangle[] obtenerLimitesJugador() {
 		return limitesJugador;
 	}
+	
 
 }

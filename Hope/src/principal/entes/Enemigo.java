@@ -235,7 +235,7 @@ public class Enemigo {
 
 	public void dibujar(Graphics g, int posicionX, int posicionY) {
 
-		g.drawString("" + saludAnterior + " salud:" + salud, 10, 180);
+//		g.drawString("" + saludAnterior + " salud:" + salud, 10, 180);
 
 		g.drawImage(imagenActual, posicionInicial.x - posicionX - 10, posicionInicial.y - posicionY - 20, null);
 
