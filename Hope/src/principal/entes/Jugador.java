@@ -37,6 +37,7 @@ public class Jugador {
 	private boolean saltando = false;
 	private boolean callendo = false;
 	private boolean agachado = false;
+	private boolean bajoAgua=false;
 
 	private int capacidadSalto = 48 * 2;
 
@@ -141,18 +142,32 @@ public class Jugador {
 		enMovimiento = false;
 		determinarDireccion();
 		animar();
-		if(GestorControles.teclado.izquierda.estaPulsada() || GestorControles.teclado.derecha.estaPulsada()){
-			pulsando=true;
-
-		}else{
-			pulsando=false;
-		}
+		
+		actualizarPlataforma();
+	
 		atacar();
 
 		if (!enemigos.isEmpty()) {
 			recibirDano();
 		}
 
+	}
+	private void actualizarPlataforma(){
+		for(int i=0;i<plataformas.size();i++){
+			if(enPlataforma){
+				plataformas.get(i).colision(true);
+			}else{
+				plataformas.get(i).colision(false);
+			}
+		}
+		
+		
+		if(GestorControles.teclado.izquierda.estaPulsada() || GestorControles.teclado.derecha.estaPulsada()){
+			pulsando=true;
+
+		}else{
+			pulsando=false;
+		}
 	}
 
 	private void atacar() {
@@ -375,16 +390,26 @@ public class Jugador {
 
 	private void determinarDireccion() {
 
-		final int velocidadX = evaluarVelocidadX();
-		final int velocidadY = evaluarVelocidadY();
-
-		if (GestorControles.teclado.abajo.estaPulsada()){
+		if (GestorControles.teclado.abajo.estaPulsada() && !bajoAgua){
 			agachado = true;
-		}
-		if (GestorControles.teclado.arriba.estaPulsada() || GestorControles.teclado.espacio.estaPulsada()
+			
+		}else if (GestorControles.teclado.arriba.estaPulsada() || GestorControles.teclado.espacio.estaPulsada()
 				|| invulnerable) {
 			agachado = false;
 		}
+		//cambiar modo sumergido modo normal
+		if(enColisionAgua(2) && GestorControles.teclado.abajo.estaPulsada()){
+			bajoAgua=true;
+			agachado=false;
+			
+		}else if(enColisionAgua(2)){
+			bajoAgua=false;
+		}
+		
+		final int velocidadX = evaluarVelocidadX();
+		final int velocidadY = evaluarVelocidadY();
+
+		
 
 		if (velocidadX == 0 && velocidadY == 0) {
 			return;
@@ -409,11 +434,8 @@ public class Jugador {
 		}
 		if(enPlataforma){
 	
-
-			System.out.println("vx0:"+velocidadX);
-			velocidadX=velocidadX+plataformas.get(0).obtenerVelocidadX();
-			
-			System.out.println("vx:"+velocidadX);
+			velocidadX=velocidadX+plataformas.get(0).obtenerVelocidadX();	
+		
 		}
 
 		return velocidadX;
@@ -421,65 +443,95 @@ public class Jugador {
 
 	private int evaluarVelocidadY() {
 		
-		if(enColisionPlataformaAbajo(2)){
-			enPlataforma=true;
-		}else{
-			enPlataforma=false;
-		}
-
-		if (enColisionAbajo(2) || enColisionAgua(2) || enPlataforma) {
-			velocidadY = 0;
-			decrementoSalto = 0;
-			saltando = false;
-			salto = (int) posicionY;
-			recorridoSalto = (int) posicionY;
-
-		} else {
-			// velocidad de caida
-			saltando = true;
-			velocidadY = 2;
-			agachado = false;
-		}
-		if (!invulnerable) {
-
-			if (GestorControles.teclado.espacio.estaPulsada() && recorridoSalto >= posicionY) {
+		if(bajoAgua){
+			
+			
+			if (enColisionAbajo(2) || enColisionAgua(2)) {
+				velocidadY = 0;
+				decrementoSalto = 0;
+				saltando = false;
+				salto = (int) posicionY;
 				recorridoSalto = (int) posicionY;
 
-				if (salto - capacidadSalto <= (int) posicionY && salto >= 0) {
-					switch (decrementoSalto) {
-					case 0:
-						velocidadY = -4;
-						break;
-					case 1:
-						velocidadY = -3;
-						break;
-					case 2:
-						velocidadY = -2;
-						break;
-					}
+			} else {
+				// velocidad de caida
+				saltando = true;
+				velocidadY = 1;
+				agachado = false;
+			}
+			if (!invulnerable) {
 
-					if (!(salto - capacidadSalto / 2 <= (int) posicionY)) {
-						decrementoSalto = 1;
-					}
-					if (!(salto - (capacidadSalto / 2) - (capacidadSalto / 4) <= (int) posicionY)) {
-						decrementoSalto = 2;
-					}
-
-					// velocidad de salto
-					if (enColisionArriba(velocidadY)) {
+				if (GestorControles.teclado.espacio.estaPulsada()) {
+					velocidadY=-1;
+					} else {
+						decrementoSalto = 0;
 						salto = -1;
+						velocidadY = 1;
 					}
-				} else {
-					decrementoSalto = 0;
-					salto = -1;
-					velocidadY = 2;
+				}
+			
+		}else{
+			if(enColisionPlataformaAbajo(2)){
+				enPlataforma=true;
+			}else{
+				enPlataforma=false;
+			}
+
+			if (enColisionAbajo(2) || enColisionAgua(2) || enPlataforma) {
+				velocidadY = 0;
+				decrementoSalto = 0;
+				saltando = false;
+				salto = (int) posicionY;
+				recorridoSalto = (int) posicionY;
+
+			} else {
+				// velocidad de caida
+				saltando = true;
+				velocidadY = 2;
+				agachado = false;
+			}
+			if (!invulnerable) {
+
+				if (GestorControles.teclado.espacio.estaPulsada() && recorridoSalto >= posicionY) {
+					recorridoSalto = (int) posicionY;
+
+					if (salto - capacidadSalto <= (int) posicionY && salto >= 0) {
+						switch (decrementoSalto) {
+						case 0:
+							velocidadY = -4;
+							break;
+						case 1:
+							velocidadY = -3;
+							break;
+						case 2:
+							velocidadY = -2;
+							break;
+						}
+
+						if (!(salto - capacidadSalto / 2 <= (int) posicionY)) {
+							decrementoSalto = 1;
+						}
+						if (!(salto - (capacidadSalto / 2) - (capacidadSalto / 4) <= (int) posicionY)) {
+							decrementoSalto = 2;
+						}
+
+						// velocidad de salto
+						if (enColisionArriba(velocidadY)) {
+							salto = -1;
+						}
+					} else {
+						decrementoSalto = 0;
+						salto = -1;
+						velocidadY = 2;
+					}
 				}
 			}
-		}
-		if (velocidadY > 0) {
-			callendo = true;
-		} else {
-			callendo = false;
+			if (velocidadY > 0) {
+				callendo = true;
+			} else {
+				callendo = false;
+			}
+			
 		}
 		
 

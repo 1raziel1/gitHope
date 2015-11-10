@@ -20,6 +20,7 @@ public class Mapa {
 
 	private final Point posicionInicial;
 	private final Point puntoSalida;
+	private final Point puntoEntrada;
 
 	private Rectangle zonaSalida;
 
@@ -92,6 +93,68 @@ public class Mapa {
 		puntoSalida.x = Integer.parseInt(datosSalida[0]);
 		puntoSalida.y = Integer.parseInt(datosSalida[1]);
 		siguienteMapa = datosSalida[2];
+		puntoEntrada=new Point();
+		puntoEntrada.x= Integer.parseInt(datosSalida[3]);
+		puntoEntrada.y=Integer.parseInt(datosSalida[4]);
+
+		zonaSalida = new Rectangle();
+
+	}
+	public Mapa(final String ruta,final Point entrada) {
+		String contenido = CargadorRecursos.leerArchivoTexto(ruta);
+
+		partes = contenido.split("\\*");
+
+		ancho = Integer.parseInt(partes[0]);
+		alto = Integer.parseInt(partes[1]);
+
+		// hojas utilizadas
+		String hojasUtilizadas = partes[2];
+		String[] hojasSeparadas = hojasUtilizadas.split(",");
+
+		// paleta
+		String paletaEntera = partes[3];
+		String[] partesPaleta = paletaEntera.split("#");
+
+		paleta = asignarSprites(partesPaleta, hojasSeparadas);
+
+		// colisiones
+		String colisionesEnteras = partes[4];
+		String[] partesColisiones = colisionesEnteras.split(",");
+
+		colisiones = extraerColisiones(partesColisiones);
+		agua = extraerAgua(partesColisiones);
+		enemigos = extraerEnemigos(partesColisiones);
+		plataformas=extraerPlataformas(partesColisiones);
+
+		// orden de los sprites
+		String spritesEnteros = partes[5];
+		String[] cadenasSprites = spritesEnteros.split(",");
+
+		sprites = extraerSprites(cadenasSprites);
+
+		// posicion jugador , salidas y entradas
+		String posicion = partes[6];
+		String[] posiciones = posicion.split("-");
+
+//		posicionInicial = new Point();
+//		posicionInicial.x = Integer.parseInt(posiciones[0])
+//				* Constantes.LADO_SPRITE;
+//		posicionInicial.y = Integer.parseInt(posiciones[1])
+//				* Constantes.LADO_SPRITE;
+		
+		posicionInicial=entrada;
+
+		String salida = partes[7];
+		String[] datosSalida = salida.split("-");
+
+		puntoSalida = new Point();
+		puntoSalida.x = Integer.parseInt(datosSalida[0]);
+		puntoSalida.y = Integer.parseInt(datosSalida[1]);
+		siguienteMapa = datosSalida[2];
+		puntoEntrada=new Point();
+		puntoEntrada.x= Integer.parseInt(datosSalida[3]);
+		puntoEntrada.y=Integer.parseInt(datosSalida[4]);
 
 		zonaSalida = new Rectangle();
 
@@ -298,7 +361,9 @@ public class Mapa {
 	public String[] obtenerPlataformas() {
 		return plataformas;
 	}
-
+	public Point obtenerEntrada(){
+		return puntoEntrada;
+	}
 
 	public int obtenerAlto() {
 		return alto;

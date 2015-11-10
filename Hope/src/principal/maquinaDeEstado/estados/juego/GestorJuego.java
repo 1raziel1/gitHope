@@ -32,7 +32,7 @@ public class GestorJuego implements EstadoJuego {
 
 	public GestorJuego() {
 		// System.out.println(audio.getAbsolutePath());
-		iniciarMapa("/mapas/mapa3");
+		mapa=new Mapa("/mapas/mapa3");
 
 		iniciarJugador();
 
@@ -110,7 +110,7 @@ public class GestorJuego implements EstadoJuego {
 	private void recargarJuego() {
 		final String ruta = "/mapas/" + mapa.obtenerSiguienteMapa();
 		
-		iniciarMapa(ruta);
+		iniciarMapa(ruta,mapa.obtenerEntrada());
 
 		iniciarJugador();
 
@@ -126,8 +126,8 @@ public class GestorJuego implements EstadoJuego {
 
 	}
 
-	private void iniciarMapa(final String ruta) {
-		mapa = new Mapa(ruta);
+	private void iniciarMapa(final String ruta,final Point entrada) {
+		mapa = new Mapa(ruta,entrada);
 	}
 
 	public void actualizar() {

@@ -12,15 +12,11 @@ import principal.mapas.Mapa;
 import principal.sprites.HojaSprites;
 
 public class Plataforma {
-	private boolean estaVivo = true;
-	private int salud = 2;
-	private int saludAnterior = salud;
 
 	private double velocidad = 1;
 
 	private int estadoAnimacion = 0;
 	public int animacion = 0;
-	private int muriendo = 0;
 
 	private int direccion;
 
@@ -81,15 +77,17 @@ public class Plataforma {
 			int temp=posicionInicial.x;
 			posicionInicial.x=posicionFinal.x;
 			posicionFinal.x=temp;
-					
-		}else if(posicionPlataforma.x>posicionFinal.x){
-			velocidadX = -1;
+			
+			posicionPlataforma.x=posicionInicial.x;
+			
 		}else{
-			velocidadX = 1;
+			if(posicionPlataforma.x>posicionFinal.x){
+				velocidadX = -1;
+			}else if(posicionPlataforma.x<posicionFinal.x){
+				velocidadX = 1;
+			}
+			
 		}
-		
-		 System.out.println("vxPlat:"+velocidadX);
-
 		
 		//limitador  de movimiento.
 //		if (limitador >= 2) {
@@ -116,34 +114,20 @@ public class Plataforma {
 
 	}
 
-	private boolean colision(final int velocidadY) {
-		for (int r = 0; r < mapa.areasColision.size(); r++) {
-			final Rectangle area = mapa.areasColision.get(r);
-
-			int origenX = area.x;
-			int origenY = area.y + velocidadY * (int) velocidad - 11
-					* (int) velocidad;
-
-			final Rectangle areaFutura = new Rectangle(origenX, origenY,
-					Constantes.LADO_SPRITE, Constantes.LADO_SPRITE);
-
-			if (colisionPlataforma.get(0).intersects(areaFutura)) {
-				colisionJugador = true;
-				return true;
-			}
-		}
-		colisionJugador = false;
-		return false;
+	public void colision(boolean colision) {
+		colisionJugador=colision;
 	}
 
 	private void animar() {
-		int frecuenciaAnimacion = 10;
-		int limite = 6;
-
-		if (GestorPrincipal.obtenerAps() % frecuenciaAnimacion == 0) {
-
+	
+		if(colisionJugador){
+			estadoAnimacion=1;
+		}else{
 			estadoAnimacion=0;
 		}
+		
+			
+		
 
 		determinarMovimiento();
 
