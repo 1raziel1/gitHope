@@ -11,12 +11,13 @@ import principal.entes.Objeto;
 import principal.entes.Plataforma;
 import principal.mapas.Mapa;
 import principal.maquinaDeEstado.EstadoJuego;
+import principal.maquinaDeEstado.GestorEstados;
 
 public class GestorJuego implements EstadoJuego {
 
 	private final int MARGEN_X = Constantes.ANCHO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
 	private final int MARGEN_Y = Constantes.ALTO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
-
+	private final GestorEstados ge;
 	Mapa mapa;
 	// File audio = new File("recursos/audio/temaPrincipalHope.wav");
 
@@ -30,7 +31,9 @@ public class GestorJuego implements EstadoJuego {
 	// Objeto corazon = new Objeto(mapa, 0, punto);
 	ArrayList<Objeto> corazon = new ArrayList<Objeto>();
 
-	public GestorJuego() {
+	public GestorJuego(GestorEstados ge) {
+		this.ge=ge;
+		
 		// System.out.println(audio.getAbsolutePath());
 		mapa=new Mapa("/mapas/mapa3");
 
@@ -51,6 +54,14 @@ public class GestorJuego implements EstadoJuego {
 		// } catch (LineUnavailableException e) {
 		// e.printStackTrace();
 		// }
+	}
+	public GestorJuego(GestorEstados ge,String url,Point puntoEntrada) {
+		this.ge=ge;
+		mapa=new Mapa(url,puntoEntrada);
+		
+		iniciarJugador();
+		generadorEnemigos();
+		generadorPlataformas();
 	}
 
 	private ArrayList<Enemigo> generadorEnemigos() {
@@ -111,14 +122,15 @@ public class GestorJuego implements EstadoJuego {
 		final String ruta = "/mapas/" + mapa.obtenerSiguienteMapa();
 		
 		iniciarMapa(ruta,mapa.obtenerEntrada());
-
+		jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
+		jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
 		iniciarJugador();
 
 		generadorEnemigos();
 		generadorPlataformas();
 
-		// jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
-		// jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
+//		 jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
+//		 jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
 	}
 
 	private void iniciarJugador() {
@@ -162,6 +174,8 @@ public class GestorJuego implements EstadoJuego {
 	}
 
 	public void dibujar(Graphics g) {
+		
+		
 		mapa.dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 		jugador.dibujar(g);
 
@@ -194,8 +208,8 @@ public class GestorJuego implements EstadoJuego {
 		// }
 
 		// g.setColor(Color.RED);
-		// g.drawString("X = " + jugador.obtenerPosicionX(), 20, 20);
-		// g.drawString("Y = " + jugador.obtenerPosicionY(), 20, 30);
+		 g.drawString("X = " + jugador.obtenerPosicionX(), 20, 20);
+		 g.drawString("Y = " + jugador.obtenerPosicionY(), 20, 30);
 		// g.drawString("Siguiente mapa: " + mapa.obtenerSiguienteMapa(), 20,
 		// 100);
 		// g.drawString("Cordenadas Salida X: " +

@@ -94,8 +94,8 @@ public class Mapa {
 		puntoSalida.y = Integer.parseInt(datosSalida[1]);
 		siguienteMapa = datosSalida[2];
 		puntoEntrada=new Point();
-		puntoEntrada.x= Integer.parseInt(datosSalida[3]);
-		puntoEntrada.y=Integer.parseInt(datosSalida[4]);
+		puntoEntrada.x= Integer.parseInt(datosSalida[3])* Constantes.LADO_SPRITE;;
+		puntoEntrada.y=Integer.parseInt(datosSalida[4])* Constantes.LADO_SPRITE;;
 
 		zonaSalida = new Rectangle();
 

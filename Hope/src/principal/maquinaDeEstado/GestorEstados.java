@@ -1,6 +1,7 @@
 package principal.maquinaDeEstado;
 
 import java.awt.Graphics;
+import java.awt.Point;
 
 import principal.maquinaDeEstado.estados.juego.GestorJuego;
 
@@ -16,7 +17,10 @@ public class GestorEstados {
 
 	private void iniciarEstados() {
 		estados = new EstadoJuego[1];
-		estados[0] = new GestorJuego();
+		estados[0] = new GestorJuego(this);
+	}
+	public void cargarMapa(String url,Point puntoEntrada){
+		estados[0]=new GestorJuego(this,url,puntoEntrada);
 	}
 
 	private void iniciarEstadoActual() {

@@ -33,7 +33,7 @@ public class Plataforma {
 	private int limitador = 0;
 	Jugador jugador;
 
-	private final int ANCHO = 15;
+	private final int ANCHO = 32;
 	private final int ALTO = 2;
 	private int velocidadX = 1;
 	private int velocidadY = 1;
@@ -50,7 +50,7 @@ public class Plataforma {
 		this.mapa = mapa;
 		this.posicionPlataforma=new Point(posicionInicial.x,posicionInicial.y);
 
-		hs = new HojaSprites("/imagenes/hojasPersonajes/ojo.png",
+		hs = new HojaSprites("/imagenes/hojasPersonajes/objetos.png",
 				Constantes.LADO_SPRITE, false);
 
 	}
@@ -107,8 +107,8 @@ public class Plataforma {
 			colisionPlataforma.clear();
 		}
 
-		Rectangle arriba = new Rectangle(posicionPlataforma.x - posicionX - 2,
-				posicionPlataforma.y - posicionY, ANCHO + 5, ALTO);
+		Rectangle arriba = new Rectangle(posicionPlataforma.x - posicionX - 8,
+				posicionPlataforma.y - posicionY+1, ANCHO , ALTO);
 
 		colisionPlataforma.add(arriba);
 
@@ -131,7 +131,7 @@ public class Plataforma {
 
 		determinarMovimiento();
 
-		imagenActual = hs.obtenerSprite(direccion, estadoAnimacion)
+		imagenActual = hs.obtenerSprite(1, estadoAnimacion)
 				.obtenerImagen();
 	}
 
@@ -153,18 +153,19 @@ public class Plataforma {
 	}
 
 	public void dibujar(Graphics g, int posicionX, int posicionY) {
-//
-//		g.drawImage(imagenActual, posicionPlataforma.x - posicionX - 10,
-//				posicionPlataforma.y - posicionY - 20, null);
+
+		g.drawImage(imagenActual, posicionPlataforma.x - posicionX - 10,
+				posicionPlataforma.y - posicionY - 20, null);
 
 		// g.setColor(Color.GREEN);
 		//
 		// for (int i = 0; i < colisionEnemigo.size(); i++)
-		 if (!colisionPlataforma.isEmpty()){
-			 g.drawRect(colisionPlataforma.get(0).x, colisionPlataforma.get(0).y,
-					 colisionPlataforma.get(0).width,
-					 colisionPlataforma.get(0).height);
-		 }
+		
+//		 if (!colisionPlataforma.isEmpty()){
+//			 g.drawRect(colisionPlataforma.get(0).x, colisionPlataforma.get(0).y,
+//					 colisionPlataforma.get(0).width,
+//					 colisionPlataforma.get(0).height);
+//		 }
 		
 	}
 
