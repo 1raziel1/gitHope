@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import principal.Constantes;
+import principal.entes.Bloque;
 import principal.entes.Enemigo;
 import principal.entes.Jugador;
 import principal.entes.Objeto;
@@ -27,6 +28,8 @@ public class GestorJuego implements EstadoJuego {
 	ArrayList<Enemigo> enemigos = new ArrayList<Enemigo>();
 	
 	ArrayList<Plataforma> plataformas = new ArrayList<Plataforma>();
+	
+	ArrayList<Bloque> bloques = new ArrayList<Bloque>();
 
 	// Objeto corazon = new Objeto(mapa, 0, punto);
 	ArrayList<Objeto> corazon = new ArrayList<Objeto>();
@@ -42,6 +45,8 @@ public class GestorJuego implements EstadoJuego {
 		generadorEnemigos();
 		
 		generadorPlataformas();
+		
+		generadorBloques();
 		// try {
 		// Clip sonido = AudioSystem.getClip();
 		// try {
@@ -62,8 +67,30 @@ public class GestorJuego implements EstadoJuego {
 		iniciarJugador();
 		generadorEnemigos();
 		generadorPlataformas();
+		generadorBloques();
 	}
+	private ArrayList<Bloque> generadorBloques() {
 
+		bloques.clear();
+
+		for (int y = 0; y < this.mapa.obtenerAlto(); y++) {
+			for (int x = 0; x < this.mapa.obtenerAncho(); x++) {
+				int puntoX = x * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionX() + MARGEN_X + MARGEN_X;
+				int puntoY = y * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionY() + MARGEN_Y + MARGEN_Y
+						+ MARGEN_Y;
+
+				if (4 == mapa.obtenerEnemigos()[x + y * this.mapa.obtenerAncho()]) {
+
+					final Point punto = new Point(puntoX, puntoY);
+					final Bloque e = new Bloque(jugador,punto,mapa);
+
+					bloques.add(e);
+				}
+			}
+		}
+
+		return bloques;
+	}
 	private ArrayList<Enemigo> generadorEnemigos() {
 
 		enemigos.clear();
@@ -128,6 +155,7 @@ public class GestorJuego implements EstadoJuego {
 
 		generadorEnemigos();
 		generadorPlataformas();
+		generadorBloques();
 
 //		 jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
 //		 jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
@@ -154,7 +182,11 @@ public class GestorJuego implements EstadoJuego {
 				enemigos.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 			}
 		}
-		
+		if (!bloques.isEmpty()) {
+			for (int i = 0; i < bloques.size(); i++) {
+				bloques.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
+			}
+		}
 		if(!plataformas.isEmpty()){
 			for (int i = 0; i < plataformas.size(); i++) {
 				plataformas.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
@@ -199,6 +231,10 @@ public class GestorJuego implements EstadoJuego {
 		for (int i = 0; i < plataformas.size(); i++) {
 			plataformas.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 		}
+		
+		for (int i = 0; i < bloques.size(); i++) {
+			bloques.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
+		}
 
 		//
 		// } else {
@@ -208,8 +244,8 @@ public class GestorJuego implements EstadoJuego {
 		// }
 
 		// g.setColor(Color.RED);
-		 g.drawString("X = " + jugador.obtenerPosicionX(), 20, 20);
-		 g.drawString("Y = " + jugador.obtenerPosicionY(), 20, 30);
+//		 g.drawString("X = " + jugador.obtenerPosicionX(), 20, 20);
+//		 g.drawString("Y = " + jugador.obtenerPosicionY(), 20, 30);
 		// g.drawString("Siguiente mapa: " + mapa.obtenerSiguienteMapa(), 20,
 		// 100);
 		// g.drawString("Cordenadas Salida X: " +

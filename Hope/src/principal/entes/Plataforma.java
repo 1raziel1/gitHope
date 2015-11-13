@@ -125,10 +125,6 @@ public class Plataforma {
 		}else{
 			estadoAnimacion=0;
 		}
-		
-			
-		
-
 		determinarMovimiento();
 
 		imagenActual = hs.obtenerSprite(1, estadoAnimacion)
