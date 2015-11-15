@@ -12,13 +12,13 @@ import principal.mapas.Mapa;
 import principal.sprites.HojaSprites;
 
 public class Bloque {
-//bloque que se pueda empujar
+	// bloque que se pueda empujar
 	private Mapa mapa;
 	private Point posicion;
 	private Jugador jugador;
-	
-	private final int ANCHO = 32;
-	private final int ALTO = 32;
+
+	private final int ANCHO = 30;
+	private final int ALTO = 30;
 	private int velocidadX = 0;
 	private int velocidadY = 1;
 	private boolean enMovimiento;
@@ -34,18 +34,18 @@ public class Bloque {
 	private int direccion;
 	private ArrayList<Rectangle> colisionBloque = new ArrayList<Rectangle>();
 
-	
-	public Bloque(Jugador jugador,Point posicion,Mapa mapa){
-		this.jugador=jugador;
-		this.posicion=posicion;
-		this.mapa=mapa;
-		limitesJugador=jugador.obtenerLimitesJugador();
-		
-		hs = new HojaSprites("/imagenes/hojasPersonajes/objetos.png",
-				Constantes.LADO_SPRITE, false);
+	private boolean colisionJugadorIzquierda = false;
+	private boolean colisionJugadorDerecha = false;
+
+	public Bloque(Jugador jugador, Point posicion, Mapa mapa) {
+		this.jugador = jugador;
+		this.posicion = posicion;
+		this.mapa = mapa;
+		limitesJugador = jugador.obtenerLimitesJugador();
+
+		hs = new HojaSprites("/imagenes/hojasPersonajes/objetos.png", Constantes.LADO_SPRITE, false);
 	}
-	
-	
+
 	public void actualizar(int posicionX, int posicionY) {
 
 		actualizarColisiones(posicionX, posicionY);
@@ -55,10 +55,11 @@ public class Bloque {
 		animar();
 
 	}
+
 	private void movimiento(Point posicion) {
 		double x = posicion.x;
 		double y = posicion.y;
-
+		velocidadX = 0;
 		if (colisionAbajo(velocidadY)) {
 			velocidadY = 0;
 		} else {
@@ -67,95 +68,98 @@ public class Bloque {
 		if (velocidadY >= 1 && !colisionAbajo(velocidadY)) {
 			y += (double) velocidadY * velocidad;
 		}
-		
+
 		if (colisionDerecha(velocidadX)) {
+			colisionJugadorDerecha = false;
+			colisionJugadorIzquierda = false;
 			velocidadX = 0;
-		}
-		else if(colisionJugadorIzquierda()){
-			velocidadX=-1;
+		} else if (colisionJugadorIzquierda) {
+
+			velocidadX = -1;
 		}
 		if (colisionIzquierda(velocidadX)) {
+			colisionJugadorDerecha = false;
+			colisionJugadorIzquierda = false;
 			velocidadX = 0;
+		} else if (colisionJugadorDerecha) {
+			velocidadX = 1;
 		}
-		else if(colisionJugadorDerecha()){
-			velocidadX=1;
-		}
-		
+
 		x += (double) velocidadX * velocidad;
-	
 
 		posicion.setLocation(x, y);
+
+		if (jugador.velocidadX != velocidadX || jugador.velocidadY != velocidadY) {
+			colisionJugadorDerecha = false;
+			colisionJugadorIzquierda = false;
+		}
+
 	}
+
 	private void animar() {
-		int frecuenciaAnimacion = 10;
+		int frecuenciaAnimacion = 30;
 		int limite = 6;
-	
+
 		if (GestorPrincipal.obtenerAps() % frecuenciaAnimacion == 0) {
 
 			animacion++;
 			if (animacion >= limite) {
 				animacion = 0;
 			}
-			if(velocidadX==-1){
+			if (velocidadX == -1) {
+				estadoAnimacion = 2;
+			} else if (velocidadX == 1) {
 				estadoAnimacion = 0;
-			}else if(velocidadX==1){
-				estadoAnimacion = 1;
-			}else{
+			} else {
 				switch (animacion) {
 				case 0:
-					estadoAnimacion = 0;
+					estadoAnimacion = 1;
 					break;
 				case 1:
 					estadoAnimacion = 1;
 					break;
 				case 2:
-					estadoAnimacion = 2;
+					estadoAnimacion = 1;
 					break;
 				case 3:
-					estadoAnimacion = 2;
+					estadoAnimacion = 1;
 					break;
 				case 4:
 					estadoAnimacion = 1;
 					break;
 				case 5:
-					estadoAnimacion = 0;
+					estadoAnimacion = 3;
 					break;
 				}
-				
+
 			}
-			if(velocidadY>0){
-				estadoAnimacion=3;
+			if (velocidadY > 0) {
+				estadoAnimacion = 3;
 			}
-			
+
 		}
-	
+
 		imagenActual = hs.obtenerSprite(2, estadoAnimacion).obtenerImagen();
-		
+
 	}
-	
+
 	private void actualizarColisiones(final int posicionX, final int posicionY) {
 		if (!colisionBloque.isEmpty()) {
 			colisionBloque.clear();
 		}
-	
-		Rectangle arriba = new Rectangle(posicion.x - posicionX, posicion.y - posicionY,
-				ANCHO , 2);
 
-		Rectangle abajo = new Rectangle(posicion.x - posicionX, posicion.y - posicionY + ALTO,
-				ANCHO, 2);
+		Rectangle arriba = new Rectangle(posicion.x - posicionX, posicion.y - posicionY, ANCHO, 2);
 
-		Rectangle izquierda = new Rectangle(posicion.x - posicionX, posicion.y - posicionY + 2, 2,
-				ALTO);
+		Rectangle abajo = new Rectangle(posicion.x - posicionX, posicion.y - posicionY + ALTO, ANCHO, 2);
 
-		Rectangle derecha = new Rectangle(posicion.x - posicionX + ANCHO - 2, posicion.y - posicionY
-				+ 2, 2, ALTO);
+		Rectangle izquierda = new Rectangle(posicion.x - posicionX, posicion.y - posicionY + 2, 2, ALTO);
 
+		Rectangle derecha = new Rectangle(posicion.x - posicionX + ANCHO - 2, posicion.y - posicionY + 2, 2, ALTO);
 
-			colisionBloque.add(arriba);
-			colisionBloque.add(abajo);
-			colisionBloque.add(izquierda);
-			colisionBloque.add(derecha);
-		
+		colisionBloque.add(arriba);
+		colisionBloque.add(abajo);
+		colisionBloque.add(izquierda);
+		colisionBloque.add(derecha);
 
 	}
 
@@ -190,7 +194,6 @@ public class Bloque {
 		}
 		return false;
 	}
-	
 
 	private boolean colisionDerecha(final int velocidadX) {
 		for (int r = 0; r < mapa.areasColision.size(); r++) {
@@ -208,51 +211,27 @@ public class Bloque {
 		}
 		return false;
 	}
-	private boolean colisionJugadorIzquierda() {
 
-		if (colisionBloque.get(2).intersects(limitesJugador[2])) {
-			return true;
-		}
-	
-	return false;
-	}
-	private boolean colisionJugadorDerecha() {
+	public void colisionJugadorIzquierda(boolean colision) {
 
-		if (colisionBloque.get(3).intersects(limitesJugador[3])) {
-			return true;
-		}
-	
-	return false;
+		colisionJugadorIzquierda = colision;
+
 	}
 
+	public void colisionJugadorDerecha(boolean colision) {
 
+		colisionJugadorDerecha = colision;
+
+	}
 
 	public void dibujar(Graphics g, int posicionX, int posicionY) {
 
-		g.drawImage(imagenActual, posicion.x - posicionX,
-				posicion.y - posicionY, null);
-		 g.drawString("bloque: "+"", 20, 60);
-		
-		// g.setColor(Color.GREEN);
-		//
-		// for (int i = 0; i < colisionEnemigo.size(); i++)
-		
-		 if (!colisionBloque.isEmpty()){
-			 g.drawRect(posicion.x - posicionX, posicion.y - posicionY,
-						ANCHO , 2);
-			 g.drawRect(posicion.x - posicionX, posicion.y - posicionY + ALTO,
-						ANCHO, 2);
-			 g.drawRect(posicion.x - posicionX, posicion.y - posicionY + 2, 2,
-						ALTO);
-			 g.drawRect(posicion.x - posicionX + ANCHO - 2, posicion.y - posicionY
-						+ 2, 2, ALTO);
-		 }
+		g.drawImage(imagenActual, posicion.x - posicionX, posicion.y - posicionY, null);
+
 	}
-	
-	public ArrayList<Rectangle> obtenerColisiones(){
+
+	public ArrayList<Rectangle> obtenerColisiones() {
 		return colisionBloque;
 	}
 
 }
-
-

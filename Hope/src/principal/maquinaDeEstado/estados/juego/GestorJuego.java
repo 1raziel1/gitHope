@@ -26,26 +26,26 @@ public class GestorJuego implements EstadoJuego {
 	Jugador jugador;
 
 	ArrayList<Enemigo> enemigos = new ArrayList<Enemigo>();
-	
+
 	ArrayList<Plataforma> plataformas = new ArrayList<Plataforma>();
-	
+
 	ArrayList<Bloque> bloques = new ArrayList<Bloque>();
 
 	// Objeto corazon = new Objeto(mapa, 0, punto);
 	ArrayList<Objeto> corazon = new ArrayList<Objeto>();
 
 	public GestorJuego(GestorEstados ge) {
-		this.ge=ge;
-		
+		this.ge = ge;
+
 		// System.out.println(audio.getAbsolutePath());
-		mapa=new Mapa("/mapas/mapa3");
+		mapa = new Mapa("/mapas/mapa3");
 
 		iniciarJugador();
 
 		generadorEnemigos();
-		
+
 		generadorPlataformas();
-		
+
 		generadorBloques();
 		// try {
 		// Clip sonido = AudioSystem.getClip();
@@ -60,15 +60,17 @@ public class GestorJuego implements EstadoJuego {
 		// e.printStackTrace();
 		// }
 	}
-	public GestorJuego(GestorEstados ge,String url,Point puntoEntrada) {
-		this.ge=ge;
-		mapa=new Mapa(url,puntoEntrada);
-		
+
+	public GestorJuego(GestorEstados ge, String url, Point puntoEntrada) {
+		this.ge = ge;
+		mapa = new Mapa(url, puntoEntrada);
+
 		iniciarJugador();
 		generadorEnemigos();
 		generadorPlataformas();
 		generadorBloques();
 	}
+
 	private ArrayList<Bloque> generadorBloques() {
 
 		bloques.clear();
@@ -82,7 +84,7 @@ public class GestorJuego implements EstadoJuego {
 				if (4 == mapa.obtenerEnemigos()[x + y * this.mapa.obtenerAncho()]) {
 
 					final Point punto = new Point(puntoX, puntoY);
-					final Bloque e = new Bloque(jugador,punto,mapa);
+					final Bloque e = new Bloque(jugador, punto, mapa);
 
 					bloques.add(e);
 				}
@@ -91,6 +93,7 @@ public class GestorJuego implements EstadoJuego {
 
 		return bloques;
 	}
+
 	private ArrayList<Enemigo> generadorEnemigos() {
 
 		enemigos.clear();
@@ -113,31 +116,33 @@ public class GestorJuego implements EstadoJuego {
 
 		return enemigos;
 	}
+
 	private ArrayList<Plataforma> generadorPlataformas() {
 
 		plataformas.clear();
-		String temp="";
-		Point puntoTemp= new Point(0, 0);
-		//cada dos puntos se creara una plataforma que se desplaza de punto a punto
+		String temp = "";
+		Point puntoTemp = new Point(0, 0);
+		// cada dos puntos se creara una plataforma que se desplaza de punto a
+		// punto
 		for (int y = 0; y < this.mapa.obtenerAlto(); y++) {
 			for (int x = 0; x < this.mapa.obtenerAncho(); x++) {
 				int puntoX = x * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionX() + MARGEN_X + MARGEN_X;
 				int puntoY = y * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionY() + MARGEN_Y + MARGEN_Y
 						+ MARGEN_Y;
-				
-				if (mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].length()==2){
-					
-					if(mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].equals(temp)){
-						
+
+				if (mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].length() == 2) {
+
+					if (mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].equals(temp)) {
+
 						final Point punto = new Point(puntoX, puntoY);
-						final Plataforma p = new Plataforma(mapa, puntoTemp,punto);
+						final Plataforma p = new Plataforma(mapa, puntoTemp, punto);
 
 						plataformas.add(p);
-						
+
 					}
 					puntoTemp = new Point(puntoX, puntoY);
-					temp=mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()];				
-					
+					temp = mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()];
+
 				}
 			}
 		}
@@ -147,8 +152,8 @@ public class GestorJuego implements EstadoJuego {
 
 	private void recargarJuego() {
 		final String ruta = "/mapas/" + mapa.obtenerSiguienteMapa();
-		
-		iniciarMapa(ruta,mapa.obtenerEntrada());
+
+		iniciarMapa(ruta, mapa.obtenerEntrada());
 		jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
 		jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
 		iniciarJugador();
@@ -157,17 +162,17 @@ public class GestorJuego implements EstadoJuego {
 		generadorPlataformas();
 		generadorBloques();
 
-//		 jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
-//		 jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
+		// jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
+		// jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
 	}
 
 	private void iniciarJugador() {
-		jugador = new Jugador(mapa, enemigos, plataformas);
+		jugador = new Jugador(mapa, enemigos, plataformas, bloques);
 
 	}
 
-	private void iniciarMapa(final String ruta,final Point entrada) {
-		mapa = new Mapa(ruta,entrada);
+	private void iniciarMapa(final String ruta, final Point entrada) {
+		mapa = new Mapa(ruta, entrada);
 	}
 
 	public void actualizar() {
@@ -176,7 +181,7 @@ public class GestorJuego implements EstadoJuego {
 		}
 		jugador.actualizar();
 		mapa.actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
-		
+
 		if (!enemigos.isEmpty()) {
 			for (int i = 0; i < enemigos.size(); i++) {
 				enemigos.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
@@ -187,12 +192,12 @@ public class GestorJuego implements EstadoJuego {
 				bloques.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 			}
 		}
-		if(!plataformas.isEmpty()){
+		if (!plataformas.isEmpty()) {
 			for (int i = 0; i < plataformas.size(); i++) {
 				plataformas.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 			}
 		}
-		
+
 		if (!corazon.isEmpty()) {
 			for (int i = 0; i < corazon.size(); i++) {
 				corazon.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
@@ -206,10 +211,8 @@ public class GestorJuego implements EstadoJuego {
 	}
 
 	public void dibujar(Graphics g) {
-		
-		
+
 		mapa.dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
-		jugador.dibujar(g);
 
 		// if (enemigo.estaVivo() || enemigo.obtenerMuriendo() < 5) {
 		for (int i = 0; i < enemigos.size(); i++) {
@@ -227,14 +230,16 @@ public class GestorJuego implements EstadoJuego {
 			corazon.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 
 		}
-		
+
 		for (int i = 0; i < plataformas.size(); i++) {
 			plataformas.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 		}
-		
+
 		for (int i = 0; i < bloques.size(); i++) {
 			bloques.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 		}
+
+		jugador.dibujar(g);
 
 		//
 		// } else {
@@ -244,8 +249,8 @@ public class GestorJuego implements EstadoJuego {
 		// }
 
 		// g.setColor(Color.RED);
-//		 g.drawString("X = " + jugador.obtenerPosicionX(), 20, 20);
-//		 g.drawString("Y = " + jugador.obtenerPosicionY(), 20, 30);
+		// g.drawString("X = " + jugador.obtenerPosicionX(), 20, 20);
+		// g.drawString("Y = " + jugador.obtenerPosicionY(), 20, 30);
 		// g.drawString("Siguiente mapa: " + mapa.obtenerSiguienteMapa(), 20,
 		// 100);
 		// g.drawString("Cordenadas Salida X: " +
