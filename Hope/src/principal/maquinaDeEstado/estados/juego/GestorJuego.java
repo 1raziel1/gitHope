@@ -38,7 +38,7 @@ public class GestorJuego implements EstadoJuego {
 		this.ge = ge;
 
 		// System.out.println(audio.getAbsolutePath());
-		mapa = new Mapa("/mapas/mapa3");
+		mapa = new Mapa("/mapas/mapa0");
 
 		iniciarJugador();
 

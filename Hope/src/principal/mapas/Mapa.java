@@ -78,7 +78,7 @@ public class Mapa {
 
 		// posicion jugador , salidas y entradas
 		String posicion = partes[6];
-		String[] posiciones = posicion.split("-");
+		String[] posiciones = posicion.split(",");
 
 		posicionInicial = new Point();
 		posicionInicial.x = Integer.parseInt(posiciones[0])
@@ -87,7 +87,7 @@ public class Mapa {
 				* Constantes.LADO_SPRITE;
 
 		String salida = partes[7];
-		String[] datosSalida = salida.split("-");
+		String[] datosSalida = salida.split(",");
 
 		puntoSalida = new Point();
 		puntoSalida.x = Integer.parseInt(datosSalida[0]);
@@ -135,7 +135,7 @@ public class Mapa {
 
 		// posicion jugador , salidas y entradas
 		String posicion = partes[6];
-		String[] posiciones = posicion.split("-");
+		String[] posiciones = posicion.split(",");
 
 //		posicionInicial = new Point();
 //		posicionInicial.x = Integer.parseInt(posiciones[0])
@@ -146,7 +146,7 @@ public class Mapa {
 		posicionInicial=entrada;
 
 		String salida = partes[7];
-		String[] datosSalida = salida.split("-");
+		String[] datosSalida = salida.split(",");
 
 		puntoSalida = new Point();
 		puntoSalida.x = Integer.parseInt(datosSalida[0]);

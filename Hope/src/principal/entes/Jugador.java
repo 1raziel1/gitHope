@@ -21,7 +21,7 @@ public class Jugador {
 
 	private int salud = 10;
 
-	private int salto = 3;
+	private int salto = 2;
 	private int decrementoSalto = 0;
 
 	private boolean enemigoGolpeado = false;
@@ -40,7 +40,7 @@ public class Jugador {
 	private boolean bajoAgua = false;
 	private boolean moviendoBloque = false;
 
-	private int capacidadSalto = 48 * 2;
+	private int capacidadSalto = (int) ((48)/0.6);
 
 	private int direccion;
 
@@ -978,7 +978,7 @@ public class Jugador {
 		final int centroY = Constantes.ALTO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
 
 		g.setColor(Color.RED);
-		// g.drawString("Salud: " + salud, 20, 60);
+		g.drawString("coor: " + posicionX+"-"+posicionY, 20, 60);
 
 		g.drawImage(imagenActual, centroX, centroY, null);
 		if (!colisionHabilidades.isEmpty())

@@ -148,7 +148,7 @@ public class Bloque {
 			colisionBloque.clear();
 		}
 
-		Rectangle arriba = new Rectangle(posicion.x - posicionX, posicion.y - posicionY, ANCHO, 2);
+		Rectangle arriba = new Rectangle(posicion.x - posicionX, posicion.y - posicionY, ANCHO, 3);
 
 		Rectangle abajo = new Rectangle(posicion.x - posicionX, posicion.y - posicionY + ALTO, ANCHO, 2);
 
