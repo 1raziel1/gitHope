@@ -21,17 +21,11 @@ public class GestorJuego implements EstadoJuego {
 	private final GestorEstados ge;
 	Mapa mapa;
 	// File audio = new File("recursos/audio/temaPrincipalHope.wav");
-
-	// Enemigo enemigo = null;
 	Jugador jugador;
 
 	ArrayList<Enemigo> enemigos = new ArrayList<Enemigo>();
-
 	ArrayList<Plataforma> plataformas = new ArrayList<Plataforma>();
-
 	ArrayList<Bloque> bloques = new ArrayList<Bloque>();
-
-	// Objeto corazon = new Objeto(mapa, 0, punto);
 	ArrayList<Objeto> corazon = new ArrayList<Objeto>();
 
 	public GestorJuego(GestorEstados ge) {
@@ -77,9 +71,8 @@ public class GestorJuego implements EstadoJuego {
 
 		for (int y = 0; y < this.mapa.obtenerAlto(); y++) {
 			for (int x = 0; x < this.mapa.obtenerAncho(); x++) {
-				int puntoX = x * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionX() + MARGEN_X + MARGEN_X;
-				int puntoY = y * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionY() + MARGEN_Y + MARGEN_Y
-						+ MARGEN_Y;
+				int puntoX = x * Constantes.LADO_SPRITE  + MARGEN_X;
+				int puntoY = y * Constantes.LADO_SPRITE  + MARGEN_Y;
 
 				if (4 == mapa.obtenerEnemigos()[x + y * this.mapa.obtenerAncho()]) {
 
@@ -100,9 +93,8 @@ public class GestorJuego implements EstadoJuego {
 
 		for (int y = 0; y < this.mapa.obtenerAlto(); y++) {
 			for (int x = 0; x < this.mapa.obtenerAncho(); x++) {
-				int puntoX = x * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionX() + MARGEN_X + MARGEN_X;
-				int puntoY = y * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionY() + MARGEN_Y + MARGEN_Y
-						+ MARGEN_Y;
+				int puntoX = x * Constantes.LADO_SPRITE + MARGEN_X;
+				int puntoY = y * Constantes.LADO_SPRITE + MARGEN_Y;
 
 				if (3 == mapa.obtenerEnemigos()[x + y * this.mapa.obtenerAncho()]) {
 
@@ -126,9 +118,8 @@ public class GestorJuego implements EstadoJuego {
 		// punto
 		for (int y = 0; y < this.mapa.obtenerAlto(); y++) {
 			for (int x = 0; x < this.mapa.obtenerAncho(); x++) {
-				int puntoX = x * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionX() + MARGEN_X + MARGEN_X;
-				int puntoY = y * Constantes.LADO_SPRITE - (int) jugador.obtenerPosicionY() + MARGEN_Y + MARGEN_Y
-						+ MARGEN_Y;
+				int puntoX = x * Constantes.LADO_SPRITE  + MARGEN_X;
+				int puntoY = y * Constantes.LADO_SPRITE  + MARGEN_Y;
 
 				if (mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].length() == 2) {
 

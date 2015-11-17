@@ -41,7 +41,7 @@ public class Enemigo {
 	private final int ALTO = 11;
 	private int velocidadX = 1;
 	private int velocidadY = 1;
-	private Point posicionInicial = new Point(400, 450);
+	private Point posicionInicial;
 	private boolean colisionJugador = false;
 
 	public Enemigo(Mapa mapa, Point posicionInicial) {

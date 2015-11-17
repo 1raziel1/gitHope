@@ -55,20 +55,38 @@ public class Jugador {
 	private Mapa mapa;
 
 	private final int ANCHO_JUGADOR = 11;
-	private final int ALTO_JUGADOR = 31;
+	private final int ALTO_JUGADOR = 28;
 
 	private final Rectangle LIMITE_ARRIBA = new Rectangle(Constantes.CENTRO_VENTANA_X - 5,
-			Constantes.CENTRO_VENTANA_Y - 16, ANCHO_JUGADOR, 1);
+			Constantes.CENTRO_VENTANA_Y - 12, ANCHO_JUGADOR, 2);
 	private final Rectangle LIMITE_ABAJO = new Rectangle(Constantes.CENTRO_VENTANA_X - 5,
-			Constantes.CENTRO_VENTANA_Y + 14, ANCHO_JUGADOR, 1);
+			Constantes.CENTRO_VENTANA_Y + 14, ANCHO_JUGADOR, 2);
 
 	private final Rectangle LIMITE_IZQUIERDA = new Rectangle(Constantes.CENTRO_VENTANA_X - 5,
-			Constantes.CENTRO_VENTANA_Y - 16, 1, ALTO_JUGADOR);
+			Constantes.CENTRO_VENTANA_Y - 12, 1, ALTO_JUGADOR);
 
 	private final Rectangle LIMITE_DERECHA = new Rectangle(Constantes.CENTRO_VENTANA_X + 5,
-			Constantes.CENTRO_VENTANA_Y - 16, 1, ALTO_JUGADOR);
+			Constantes.CENTRO_VENTANA_Y - 12, 1, ALTO_JUGADOR);
 
 	private final Rectangle[] limitesJugador = { LIMITE_ARRIBA, LIMITE_ABAJO, LIMITE_IZQUIERDA, LIMITE_DERECHA };
+	
+	
+	
+	
+	//Agachado
+	private final Rectangle LIMITE_ARRIBA_AGACHADO = new Rectangle(Constantes.CENTRO_VENTANA_X-15,
+			Constantes.CENTRO_VENTANA_Y , ANCHO_JUGADOR+20, 2);
+	private final Rectangle LIMITE_ABAJO_AGACHADO = new Rectangle(Constantes.CENTRO_VENTANA_X-15,
+			Constantes.CENTRO_VENTANA_Y + 14, ANCHO_JUGADOR+20, 2);
+
+	private final Rectangle LIMITE_IZQUIERDA_AGACHADO = new Rectangle(Constantes.CENTRO_VENTANA_X - 15,
+			Constantes.CENTRO_VENTANA_Y, 1, ALTO_JUGADOR-15);
+
+	private final Rectangle LIMITE_DERECHA_AGACHADO = new Rectangle(Constantes.CENTRO_VENTANA_X + 15,
+			Constantes.CENTRO_VENTANA_Y , 1, ALTO_JUGADOR-15);
+
+	private final Rectangle[] limitesJugadorAgachado = { LIMITE_ARRIBA_AGACHADO, LIMITE_ABAJO_AGACHADO, LIMITE_IZQUIERDA_AGACHADO, LIMITE_DERECHA_AGACHADO };
+	
 
 	private int animacion;
 	private int estado;
@@ -421,7 +439,7 @@ public class Jugador {
 			agachado = false;
 		}
 		// cambiar modo sumergido modo normal
-		if (enColisionAgua(2) && GestorControles.teclado.abajo.estaPulsada()) {
+		if (enColisionAgua(2) && GestorControles.teclado.abajo.estaPulsada() && !GestorControles.teclado.espacio.estaPulsada() ) {
 			bajoAgua = true;
 			agachado = false;
 
@@ -647,10 +665,16 @@ public class Jugador {
 			int origenY = area.y;
 
 			final Rectangle areaFutura = new Rectangle(origenX, origenY, Constantes.LADO_SPRITE, Constantes.LADO_SPRITE);
-
-			if (LIMITE_IZQUIERDA.intersects(areaFutura)) {
-				return true;
+			if(!agachado){
+				if (LIMITE_IZQUIERDA.intersects(areaFutura)) {
+					return true;
+				}
+			}else{
+				if (LIMITE_IZQUIERDA_AGACHADO.intersects(areaFutura)) {
+					return true;
+				}
 			}
+		
 		}
 
 		return false;
@@ -665,10 +689,16 @@ public class Jugador {
 			int origenY = area.y;
 
 			final Rectangle areaFutura = new Rectangle(origenX, origenY, Constantes.LADO_SPRITE, Constantes.LADO_SPRITE);
-
-			if (LIMITE_DERECHA.intersects(areaFutura)) {
-				return true;
+			if(!agachado){
+				if (LIMITE_DERECHA.intersects(areaFutura)) {
+					return true;
+				}
+			}else{
+				if (LIMITE_DERECHA_AGACHADO.intersects(areaFutura)) {
+					return true;
+				}
 			}
+			
 		}
 
 		return false;
@@ -985,14 +1015,14 @@ public class Jugador {
 			g.drawRect(colisionHabilidades.get(0).x, colisionHabilidades.get(0).y, colisionHabilidades.get(0).width,
 					colisionHabilidades.get(0).height);
 
-		// g.drawRect(LIMITE_ARRIBA.x, LIMITE_ARRIBA.y, LIMITE_ARRIBA.width,
-		// LIMITE_ARRIBA.height);
-		// g.drawRect(LIMITE_ABAJO.x, LIMITE_ABAJO.y, LIMITE_ABAJO.width,
-		// LIMITE_ABAJO.height);
-		// g.drawRect(LIMITE_IZQUIERDA.x, LIMITE_IZQUIERDA.y,
-		// LIMITE_IZQUIERDA.width, LIMITE_IZQUIERDA.height);
-		// g.drawRect(LIMITE_DERECHA.x, LIMITE_DERECHA.y, LIMITE_DERECHA.width,
-		// LIMITE_DERECHA.height);
+//		 g.drawRect(LIMITE_ARRIBA_AGACHADO.x, LIMITE_ARRIBA_AGACHADO.y, LIMITE_ARRIBA_AGACHADO.width,
+//		 LIMITE_ARRIBA_AGACHADO.height);
+//		 g.drawRect(LIMITE_ABAJO_AGACHADO.x, LIMITE_ABAJO_AGACHADO.y, LIMITE_ABAJO_AGACHADO.width,
+//		 LIMITE_ABAJO_AGACHADO.height);
+//		 g.drawRect(LIMITE_IZQUIERDA_AGACHADO.x, LIMITE_IZQUIERDA_AGACHADO.y,
+//		 LIMITE_IZQUIERDA_AGACHADO.width, LIMITE_IZQUIERDA_AGACHADO.height);
+//		 g.drawRect(LIMITE_DERECHA_AGACHADO.x, LIMITE_DERECHA_AGACHADO.y, LIMITE_DERECHA_AGACHADO.width,
+//		 LIMITE_DERECHA_AGACHADO.height);
 
 	}
 
