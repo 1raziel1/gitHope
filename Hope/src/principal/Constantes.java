@@ -8,8 +8,8 @@ public class Constantes {
 	public static int ANCHO_JUEGO = 640;
 	public static int ALTO_JUEGO = 360;
 
-	public static int ANCHO_PANTALLA_COMPLETA = 640 * 2;
-	public static int ALTO_PANTALLA_COMPLETA = 360 * 2;
+	public static int ANCHO_PANTALLA_COMPLETA =640;//1366
+	public static int ALTO_PANTALLA_COMPLETA  =360;//768
 
 	public static double FACTOR_ESCALADO_X = (double) ANCHO_PANTALLA_COMPLETA
 			/ (double) ANCHO_JUEGO;

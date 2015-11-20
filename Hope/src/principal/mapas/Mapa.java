@@ -32,6 +32,8 @@ public class Mapa {
 	private final boolean[] agua;
 	private final int[] enemigos;
 	private final String[] plataformas;
+	private final String[] puertas;
+
 
 	public ArrayList<Rectangle> areasColision = new ArrayList<Rectangle>();
 	public ArrayList<Rectangle> areasAgua = new ArrayList<Rectangle>();
@@ -69,6 +71,7 @@ public class Mapa {
 		agua = extraerAgua(partesColisiones);
 		enemigos = extraerEnemigos(partesColisiones);
 		plataformas=extraerPlataformas(partesColisiones);
+		puertas=extraerPuertas(partesColisiones);
 
 		// orden de los sprites
 		String spritesEnteros = partes[5];
@@ -126,6 +129,8 @@ public class Mapa {
 		agua = extraerAgua(partesColisiones);
 		enemigos = extraerEnemigos(partesColisiones);
 		plataformas=extraerPlataformas(partesColisiones);
+		puertas=extraerPuertas(partesColisiones);
+
 
 		// orden de los sprites
 		String spritesEnteros = partes[5];
@@ -196,11 +201,31 @@ public class Mapa {
 
 		return enemigos;
 	}
+	private String[] extraerPuertas(final String[] cadenaColisiones){
+		String [] plataformas=new String[cadenaColisiones.length];
+		for (int i = 0; i < cadenaColisiones.length; i++) {
+			if(cadenaColisiones[i].length()==2){
+				if(cadenaColisiones[i].charAt(0)=='b'){
+					plataformas[i] = cadenaColisiones[i];
+				}else{
+					plataformas[i]="0";
+				}
+			}else{
+				plataformas[i]="0";
+			}
+		}
+		return plataformas;
+	}
+	
 	private String[] extraerPlataformas(final String[] cadenaColisiones){
 		String [] plataformas=new String[cadenaColisiones.length];
 		for (int i = 0; i < cadenaColisiones.length; i++) {
 			if(cadenaColisiones[i].length()==2){
-				plataformas[i] = cadenaColisiones[i];
+				if(cadenaColisiones[i].charAt(0)=='a'){
+					plataformas[i] = cadenaColisiones[i];
+				}else{
+					plataformas[i]="0";
+				}
 			}else{
 				plataformas[i]="0";
 			}
@@ -371,5 +396,8 @@ public class Mapa {
 
 	public int obtenerAncho() {
 		return ancho;
+	}
+	public String[] obtenerPuertas() {
+		return puertas;
 	}
 }

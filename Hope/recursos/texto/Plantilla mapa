@@ -9,7 +9,7 @@
 02:1-2 // textura cielo
 *
 00000000000 // mapa de colisiones
-00000000000
+00000000000	//0 aire,1 solido,2 agua,3 enemigo,4 bloque,a0 plataforma,b0 puerta
 00000000000
 00000000000
 00000000000
@@ -26,7 +26,7 @@
 01 01 01 01 01 01 01 01 01 01 01
 01 01 01 01 01 01 01 01 01 01 01
 *
-0-0//entrada
+0,0//entrada
 *
-5-5//salida
+49,12,mapa0,2,14//salida-mapasiguiente-entradaSiguiente
 

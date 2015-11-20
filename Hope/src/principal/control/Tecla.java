@@ -8,9 +8,7 @@ public class Tecla {
 	private int i=0;
 
 	public void teclaPulsada() {
-
 		pulsada = true;
-		ultimaPulsacion = System.nanoTime();
 	}
 
 	public void teclaLiberada() {

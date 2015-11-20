@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import principal.Constantes;
 import principal.GestorPrincipal;
 import principal.control.GestorControles;
+import principal.entes.enemigos.Enemigo;
 import principal.mapas.Mapa;
 import principal.sprites.HojaSprites;
 
@@ -35,6 +36,7 @@ public class Jugador {
 
 	private boolean invulnerable = false;
 	private boolean saltando = false;
+	private boolean reinicioSalto=true;
 	private boolean callendo = false;
 	private boolean agachado = false;
 	private boolean bajoAgua = false;
@@ -97,6 +99,7 @@ public class Jugador {
 	private ArrayList<Enemigo> enemigos = new ArrayList<Enemigo>();
 	private ArrayList<Plataforma> plataformas = new ArrayList<Plataforma>();
 	private ArrayList<Bloque> bloques = new ArrayList<Bloque>();
+	private  ArrayList<Puerta[]> puertas=new ArrayList<Puerta[]>();
 
 	private ArrayList<Rectangle> colisionHabilidades = new ArrayList<Rectangle>();
 
@@ -140,7 +143,26 @@ public class Jugador {
 	// this.plataformas = plataformas;
 	// }
 
-	public Jugador(Mapa mapa, ArrayList<Enemigo> enemigos, ArrayList<Plataforma> plataformas, ArrayList<Bloque> bloques) {
+//	public Jugador(Mapa mapa, ArrayList<Enemigo> enemigos, ArrayList<Plataforma> plataformas, ArrayList<Bloque> bloques) {
+//		posicionX = mapa.obtenerPosicionInicial().x;
+//		posicionY = mapa.obtenerPosicionInicial().y;
+//
+//		direccion = 2;
+//
+//		enMovimiento = false;
+//
+//		hs = new HojaSprites("/imagenes/hojasPersonajes/1.png", Constantes.LADO_SPRITE, false);
+//		imagenActual = hs.obtenerSprite(0).obtenerImagen();
+//
+//		animacion = 0;
+//		estado = 0;
+//
+//		this.mapa = mapa;
+//		this.enemigos = enemigos;
+//		this.plataformas = plataformas;
+//		this.bloques = bloques;
+//	}
+	public Jugador(Mapa mapa, ArrayList<Enemigo> enemigos, ArrayList<Plataforma> plataformas, ArrayList<Bloque> bloques,ArrayList<Puerta[]> puertas) {
 		posicionX = mapa.obtenerPosicionInicial().x;
 		posicionY = mapa.obtenerPosicionInicial().y;
 
@@ -158,6 +180,7 @@ public class Jugador {
 		this.enemigos = enemigos;
 		this.plataformas = plataformas;
 		this.bloques = bloques;
+		this.puertas=puertas;
 	}
 
 	// public Jugador(Mapa mapa) {
@@ -529,39 +552,45 @@ public class Jugador {
 				agachado = false;
 			}
 			if (!invulnerable) {
+				if(!GestorControles.teclado.espacio.estaPulsada()){
+					reinicioSalto=true;
+				}
+				if(reinicioSalto){
+					if (GestorControles.teclado.espacio.estaPulsada() && recorridoSalto >= posicionY) {
+						recorridoSalto = (int) posicionY;
 
-				if (GestorControles.teclado.espacio.estaPulsada() && recorridoSalto >= posicionY) {
-					recorridoSalto = (int) posicionY;
+						if (salto - capacidadSalto <= (int) posicionY && salto >= 0) {
+							switch (decrementoSalto) {
+							case 0:
+								velocidadY = -4;
+								break;
+							case 1:
+								velocidadY = -3;
+								break;
+							case 2:
+								velocidadY = -2;
+								break;
+							}
 
-					if (salto - capacidadSalto <= (int) posicionY && salto >= 0) {
-						switch (decrementoSalto) {
-						case 0:
-							velocidadY = -4;
-							break;
-						case 1:
-							velocidadY = -3;
-							break;
-						case 2:
-							velocidadY = -2;
-							break;
-						}
+							if (!(salto - capacidadSalto / 2 <= (int) posicionY)) {
+								decrementoSalto = 1;
+							}
+							if (!(salto - (capacidadSalto / 2) - (capacidadSalto / 4) <= (int) posicionY)) {
+								decrementoSalto = 2;
+							}
 
-						if (!(salto - capacidadSalto / 2 <= (int) posicionY)) {
-							decrementoSalto = 1;
-						}
-						if (!(salto - (capacidadSalto / 2) - (capacidadSalto / 4) <= (int) posicionY)) {
-							decrementoSalto = 2;
-						}
-
-						// velocidad de salto
-						if (enColisionArriba(velocidadY)) {
+							// velocidad de salto
+							if (enColisionArriba(velocidadY)) {
+								salto = -1;
+							}
+						} else {
+							reinicioSalto=false;
+							decrementoSalto = 0;
 							salto = -1;
+							velocidadY = 2;
 						}
-					} else {
-						decrementoSalto = 0;
-						salto = -1;
-						velocidadY = 2;
 					}
+				
 				}
 			}
 			if (velocidadY > 0) {
@@ -586,10 +615,10 @@ public class Jugador {
 		}
 
 		if (!fueraMapa(velocidadX, velocidadY)) {
-			if (velocidadX <= -1 && !enColisionIzquierda(velocidadX) && !enColisionIzquierdaBloque(velocidadX)) {
+			if (velocidadX <= -1 && !enColisionIzquierda(velocidadX) && !enColisionIzquierdaBloque(velocidadX) &&!enColisionIzquierdaPuerta(velocidadX)) {
 				posicionX += velocidadX * velocidad;
 			}
-			if (velocidadX >= 1 && !enColisionDerecha(velocidadX) && !enColisionDerechaBloque(velocidadX)) {
+			if (velocidadX >= 1 && !enColisionDerecha(velocidadX) && !enColisionDerechaBloque(velocidadX) &&!enColisionDerechaPuerta(velocidadX)) {
 				posicionX += velocidadX * velocidad;
 			}
 			if (velocidadY <= -1 && !enColisionArriba(velocidadY)) {
@@ -812,6 +841,59 @@ public class Jugador {
 
 		return false;
 	}
+	private boolean enColisionIzquierdaPuerta(final int velocidadX) {
+		for (int r = 0; r < puertas.size(); r++) {
+			for(int i=0;i<puertas.get(r).length;i++){
+				if(!puertas.get(r)[i].obtenerColisiones().isEmpty()){
+					final Rectangle area = puertas.get(r)[i].obtenerColisiones().get(0);
+
+					int origenX = area.x + velocidadX * (int) velocidad +3 * (int) velocidad;
+					int origenY = area.y;
+
+					final Rectangle areaFutura = new Rectangle(origenX, origenY, 
+							puertas.get(r)[i].obtenerColisiones().get(0).width,
+							puertas.get(r)[i].obtenerColisiones().get(0).height);
+					
+						if (LIMITE_IZQUIERDA.intersects(areaFutura)) {
+							return true;
+						}
+					
+				}
+				
+			}
+			
+		
+		}
+
+		return false;
+	}
+	private boolean enColisionDerechaPuerta(final int velocidadX) {
+		
+		for (int r = 0; r < puertas.size(); r++) {
+			for(int i=0;i<puertas.get(r).length;i++){
+				if(!puertas.get(r)[i].obtenerColisiones().isEmpty()){
+					final Rectangle area = puertas.get(r)[i].obtenerColisiones().get(0);
+
+					int origenX = area.x + velocidadX * (int) velocidad -3 * (int) velocidad;
+					int origenY = area.y;
+
+						final Rectangle areaFutura = new Rectangle(origenX, origenY, 
+							puertas.get(r)[i].obtenerColisiones().get(0).width,
+							puertas.get(r)[i].obtenerColisiones().get(0).height);
+				
+						if (LIMITE_DERECHA.intersects(areaFutura)) {
+							return true;
+						}
+					
+				}
+			
+			}
+			
+		
+		}
+
+		return false;
+	}
 
 	private boolean enColisionEnemigoDerecha(int velocidadX) {
 		for (int arrayene = 0; arrayene < enemigos.size(); arrayene++) {
@@ -852,6 +934,7 @@ public class Jugador {
 
 		return false;
 	}
+	
 
 	private void golpearEnemigo(int i) {
 		if (enemigoGolpeado) {

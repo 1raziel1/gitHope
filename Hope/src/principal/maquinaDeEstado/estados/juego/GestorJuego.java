@@ -6,10 +6,11 @@ import java.util.ArrayList;
 
 import principal.Constantes;
 import principal.entes.Bloque;
-import principal.entes.Enemigo;
 import principal.entes.Jugador;
 import principal.entes.Objeto;
 import principal.entes.Plataforma;
+import principal.entes.Puerta;
+import principal.entes.enemigos.Enemigo;
 import principal.mapas.Mapa;
 import principal.maquinaDeEstado.EstadoJuego;
 import principal.maquinaDeEstado.GestorEstados;
@@ -19,6 +20,7 @@ public class GestorJuego implements EstadoJuego {
 	private final int MARGEN_X = Constantes.ANCHO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
 	private final int MARGEN_Y = Constantes.ALTO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
 	private final GestorEstados ge;
+	private boolean abiertasE=false;
 	Mapa mapa;
 	// File audio = new File("recursos/audio/temaPrincipalHope.wav");
 	Jugador jugador;
@@ -27,6 +29,7 @@ public class GestorJuego implements EstadoJuego {
 	ArrayList<Plataforma> plataformas = new ArrayList<Plataforma>();
 	ArrayList<Bloque> bloques = new ArrayList<Bloque>();
 	ArrayList<Objeto> corazon = new ArrayList<Objeto>();
+	final ArrayList<Puerta[]> puertas=new ArrayList<Puerta[]>();
 
 	public GestorJuego(GestorEstados ge) {
 		this.ge = ge;
@@ -35,12 +38,14 @@ public class GestorJuego implements EstadoJuego {
 		mapa = new Mapa("/mapas/mapa0");
 
 		iniciarJugador();
-
+		
+		generadorPlataformas();
+		generadorBloques();
+		generadorPuertas();
+		
 		generadorEnemigos();
 
-		generadorPlataformas();
 
-		generadorBloques();
 		// try {
 		// Clip sonido = AudioSystem.getClip();
 		// try {
@@ -60,9 +65,13 @@ public class GestorJuego implements EstadoJuego {
 		mapa = new Mapa(url, puntoEntrada);
 
 		iniciarJugador();
-		generadorEnemigos();
+		
 		generadorPlataformas();
 		generadorBloques();
+		generadorPuertas();
+		
+		generadorEnemigos();
+		
 	}
 
 	private ArrayList<Bloque> generadorBloques() {
@@ -86,6 +95,47 @@ public class GestorJuego implements EstadoJuego {
 
 		return bloques;
 	}
+	private ArrayList<Puerta[]> generadorPuertas() {
+		
+		puertas.clear();
+		abiertasE=false;
+		String temp = "";
+		Point puntoTemp = new Point(0, 0);
+		for (int y = 0; y < this.mapa.obtenerAlto(); y++) {
+			for (int x = 0; x < this.mapa.obtenerAncho(); x++) {
+				
+				if(mapa.obtenerPuertas()[x + y * this.mapa.obtenerAncho()].length()==2){
+					
+					if (mapa.obtenerPuertas()[x + y * this.mapa.obtenerAncho()].equals(temp)) {
+						Puerta[] puerta=new Puerta[y-(int)puntoTemp.getY()+1];
+						for(int i=0;i<=y-puntoTemp.getY();i++){
+							int puntoX = (int)puntoTemp.getX()* Constantes.LADO_SPRITE  + MARGEN_X;
+							int puntoY =((int)puntoTemp.getY()+ i)* Constantes.LADO_SPRITE  + MARGEN_Y;
+							
+							Point puntoPuerta=new Point(puntoX,puntoY);
+							Puerta p=new Puerta(jugador,puntoPuerta,mapa,x);
+							puerta[i]=p;
+						}
+						puertas.add(puerta);
+					}
+					puntoTemp = new Point(x, y);
+					temp = mapa.obtenerPuertas()[x + y * this.mapa.obtenerAncho()];
+				}
+			}
+		}
+
+		return puertas;
+	}
+	private void abrirPuertas() {
+		abiertasE=true;
+		for (int i = 0;i <puertas.size(); i++) {
+			for(int z=0;z<puertas.get(i).length;z++){
+				puertas.get(i)[z].abrirPuerta(true,puertas.get(i).length-1-z);
+				
+			}
+		}
+		
+	}
 
 	private ArrayList<Enemigo> generadorEnemigos() {
 
@@ -99,7 +149,7 @@ public class GestorJuego implements EstadoJuego {
 				if (3 == mapa.obtenerEnemigos()[x + y * this.mapa.obtenerAncho()]) {
 
 					final Point punto = new Point(puntoX, puntoY);
-					final Enemigo e = new Enemigo(mapa, punto);
+					final Enemigo e = new Enemigo(mapa, punto,puertas);
 
 					enemigos.add(e);
 				}
@@ -120,21 +170,19 @@ public class GestorJuego implements EstadoJuego {
 			for (int x = 0; x < this.mapa.obtenerAncho(); x++) {
 				int puntoX = x * Constantes.LADO_SPRITE  + MARGEN_X;
 				int puntoY = y * Constantes.LADO_SPRITE  + MARGEN_Y;
+			if (mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].length()==2) {
+				if (mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].equals(temp)) {
 
-				if (mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].length() == 2) {
+					final Point punto = new Point(puntoX, puntoY);
+					final Plataforma p = new Plataforma(mapa, puntoTemp, punto);
 
-					if (mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()].equals(temp)) {
-
-						final Point punto = new Point(puntoX, puntoY);
-						final Plataforma p = new Plataforma(mapa, puntoTemp, punto);
-
-						plataformas.add(p);
-
-					}
-					puntoTemp = new Point(puntoX, puntoY);
-					temp = mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()];
+					plataformas.add(p);
 
 				}
+				puntoTemp = new Point(puntoX, puntoY);
+				temp = mapa.obtenerPlataformas()[x + y * this.mapa.obtenerAncho()];
+			}
+				
 			}
 		}
 
@@ -143,22 +191,31 @@ public class GestorJuego implements EstadoJuego {
 
 	private void recargarJuego() {
 		final String ruta = "/mapas/" + mapa.obtenerSiguienteMapa();
-
+		enemigos.clear();
+		plataformas.clear();
+		bloques.clear();
+		corazon.clear();
+		
 		iniciarMapa(ruta, mapa.obtenerEntrada());
+		
 		jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
 		jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
+		
 		iniciarJugador();
-
-		generadorEnemigos();
+		
 		generadorPlataformas();
+		generadorPuertas();
 		generadorBloques();
+		
+		generadorEnemigos();
+
 
 		// jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
 		// jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
 	}
 
 	private void iniciarJugador() {
-		jugador = new Jugador(mapa, enemigos, plataformas, bloques);
+		jugador = new Jugador(mapa, enemigos, plataformas, bloques,puertas);
 
 	}
 
@@ -172,11 +229,21 @@ public class GestorJuego implements EstadoJuego {
 		}
 		jugador.actualizar();
 		mapa.actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
+		
+		if(!puertas.isEmpty()){
+			for (int i = 0; i <puertas.size(); i++) {
+				for(int z=0;z<puertas.get(i).length;z++){
+					puertas.get(i)[z].actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
+				}
+			}
+		}
 
 		if (!enemigos.isEmpty()) {
 			for (int i = 0; i < enemigos.size(); i++) {
 				enemigos.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 			}
+		}else if(!abiertasE){
+			abrirPuertas();
 		}
 		if (!bloques.isEmpty()) {
 			for (int i = 0; i < bloques.size(); i++) {
@@ -216,6 +283,11 @@ public class GestorJuego implements EstadoJuego {
 				i--;
 			}
 
+		}
+		for (int i = 0; i <puertas.size(); i++) {
+			for(int z=0;z<puertas.get(i).length;z++){
+				puertas.get(i)[z].dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
+			}
 		}
 		for (int i = 0; i < corazon.size(); i++) {
 			corazon.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
