@@ -499,7 +499,7 @@ public class Jugador {
 			velocidadX = velocidadX + plataformas.get(0).obtenerVelocidadX();
 
 		}
-
+		
 		return velocidadX;
 	}
 
@@ -613,7 +613,7 @@ public class Jugador {
 		} else {
 			velocidad = 1;
 		}
-
+		
 		if (!fueraMapa(velocidadX, velocidadY)) {
 			if (velocidadX <= -1 && !enColisionIzquierda(velocidadX) && !enColisionIzquierdaBloque(velocidadX) &&!enColisionIzquierdaPuerta(velocidadX)) {
 				posicionX += velocidadX * velocidad;
@@ -884,7 +884,6 @@ public class Jugador {
 						if (LIMITE_DERECHA.intersects(areaFutura)) {
 							return true;
 						}
-					
 				}
 			
 			}

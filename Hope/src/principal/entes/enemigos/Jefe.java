@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import principal.Constantes;
 import principal.GestorPrincipal;
 import principal.entes.Jugador;
+import principal.entes.Puerta;
 import principal.mapas.Mapa;
 import principal.sprites.HojaSprites;
 
@@ -17,8 +18,8 @@ public class Jefe {
 
 	
 		private boolean estaVivo = true;
-		private int salud = 2;
-		private int saludAnterior = salud;
+		private int salud = 10;
+		private int saludMaxima = salud;
 		private boolean objeto = false;
 		private double velocidad = 1;
 
@@ -36,23 +37,25 @@ public class Jefe {
 		private HojaSprites hs;
 
 		private BufferedImage imagenActual;
-
+	
 		private Mapa mapa;
 		private int limitador = 0;
 		Jugador jugador;
 
-		private final int ANCHO = 11;
+		private final int ANCHO = 30;
 		private final int ALTO = 11;
 		private int velocidadX = 1;
 		private int velocidadY = 1;
 		private Point posicionInicial;
 		private boolean colisionJugador = false;
+		private  ArrayList<Puerta[]> puertas;
 
-		public Jefe(Mapa mapa, Point posicionInicial) {
+
+		public Jefe(Mapa mapa, Point posicionInicial,ArrayList<Puerta[]> puertas) {
 
 			this.posicionInicial = posicionInicial;
 			this.mapa = mapa;
-
+			this.puertas=puertas;
 			hs = new HojaSprites("/imagenes/hojasPersonajes/ojo.png", Constantes.LADO_SPRITE, false);
 
 		}
@@ -87,10 +90,10 @@ public class Jefe {
 			if (velocidadY >= 1 && !colisionAbajo(velocidadY)) {
 				y += (double) velocidadY * velocidad;
 			}
-			if (colisionDerecha(velocidadX)) {
+			if (colisionDerecha(velocidadX) ||  enColisionDerechaPuerta(velocidadX)) {
 				velocidadX = -1;
 			}
-			if (colisionIzquierda(velocidadX)) {
+			if (colisionIzquierda(velocidadX) || enColisionIzquierdaPuerta(velocidadX)) {
 				velocidadX = 1;
 			}
 			if (limitador >= 2) {
@@ -174,6 +177,55 @@ public class Jefe {
 					return true;
 				}
 			}
+			return false;
+		}
+		private boolean enColisionIzquierdaPuerta(final int velocidadX) {
+			for (int r = 0; r < puertas.size(); r++) {
+				for(int i=0;i<puertas.get(r).length;i++){
+					if(!puertas.get(r)[i].obtenerColisiones().isEmpty()){
+						final Rectangle area = puertas.get(r)[i].obtenerColisiones().get(0);
+
+						int origenX = area.x + velocidadX * (int) velocidad +3 * (int) velocidad;
+						int origenY = area.y;
+
+						final Rectangle areaFutura = new Rectangle(origenX, origenY, 
+								puertas.get(r)[i].obtenerColisiones().get(0).width,
+								puertas.get(r)[i].obtenerColisiones().get(0).height);
+						if (colisionEnemigo.get(2).intersects(areaFutura)) {
+							return true;
+						}
+					}
+					
+				}
+				
+			
+			}
+
+			return false;
+		}
+		private boolean enColisionDerechaPuerta(final int velocidadX) {
+			
+			for (int r = 0; r < puertas.size(); r++) {
+				for(int i=0;i<puertas.get(r).length;i++){
+					if(!puertas.get(r)[i].obtenerColisiones().isEmpty()){
+						final Rectangle area = puertas.get(r)[i].obtenerColisiones().get(0);
+
+						int origenX = area.x + velocidadX * (int) velocidad -3 * (int) velocidad;
+						int origenY = area.y;
+
+							final Rectangle areaFutura = new Rectangle(origenX, origenY, 
+								puertas.get(r)[i].obtenerColisiones().get(0).width,
+								puertas.get(r)[i].obtenerColisiones().get(0).height);
+							if (colisionEnemigo.get(3).intersects(areaFutura)) {
+								return true;
+							}
+					}
+				
+				}
+				
+			
+			}
+
 			return false;
 		}
 

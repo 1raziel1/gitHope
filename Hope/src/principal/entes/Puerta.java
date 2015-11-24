@@ -14,18 +14,16 @@ import principal.sprites.HojaSprites;
 
 public class Puerta {
 	// bloque que se pueda empujar
-	private Mapa mapa;
+
 	private Point posicion;
-	private Jugador jugador;
+
 
 	private final int ANCHO = 30;
 	private final int ALTO = 30;
-	private int velocidadX = 0;
-	private int velocidadY = 0;
+
 	private boolean abierta=false;
 	private HojaSprites hs;
-	private int limitador = 0;
-	private int pos = 0;
+
 	private BufferedImage imagenActual;
 	private int tiempoAbrir;
 	private long tiempo;
@@ -33,19 +31,13 @@ public class Puerta {
 
 	private int estadoAnimacion = 0;
 	public int animacion = 0;
-	private Rectangle[] limitesJugador;
+
 	private ArrayList<Rectangle> colisionPuerta = new ArrayList<Rectangle>();
 
-	private boolean colisionJugadorIzquierda = false;
-	private boolean colisionJugadorDerecha = false;
+
 
 	public Puerta(Jugador jugador, Point posicion, Mapa mapa,int pos) {
-		this.jugador = jugador;
 		this.posicion = posicion;
-		this.mapa = mapa;
-		this.pos=pos;
-		limitesJugador = jugador.obtenerLimitesJugador();
-
 		hs = new HojaSprites("/imagenes/hojasPersonajes/objetos.png", Constantes.LADO_SPRITE, false);
 		imagenActual = hs.obtenerSprite(3,0).obtenerImagen();
 	}
@@ -58,8 +50,6 @@ public class Puerta {
 		}else{
 			actualizarColisiones(posicionX, posicionY);
 		}
-		
-		
 		animar();
 	
 		
@@ -71,7 +61,7 @@ public class Puerta {
 		int limite = 4;
 		if(abierta){
 			if((tiempoAbrir*700)+tiempo<=System.currentTimeMillis())
-			if (GestorPrincipal.obtenerAps() % frecuenciaAnimacion == 0) {
+			if (GestorPrincipal.obtenerAps() % frecuenciaAnimacion == 0 && animacion<3) {
 	
 				animacion++;	
 				if (animacion >= limite) {
@@ -108,29 +98,11 @@ public class Puerta {
 			colisionPuerta.clear();
 		}
 		
-			Rectangle arriba = new Rectangle(posicion.x - posicionX, posicion.y - posicionY, ANCHO, ALTO);
+			Rectangle colision = new Rectangle(posicion.x - posicionX, posicion.y - posicionY, ANCHO, ALTO);
 
-			Rectangle abajo = new Rectangle(posicion.x - posicionX, posicion.y - posicionY + ALTO, ANCHO, 2);
-
-			Rectangle izquierda = new Rectangle(posicion.x - posicionX, posicion.y - posicionY + 2, 2, ALTO);
-
-			Rectangle derecha = new Rectangle(posicion.x - posicionX + ANCHO - 2, posicion.y - posicionY + 2, 2, ALTO);
-
-			colisionPuerta.add(arriba);
+			colisionPuerta.add(colision);
 	}
 	
-
-	public void colisionJugadorIzquierda(boolean colision) {
-
-		colisionJugadorIzquierda = colision;
-
-	}
-
-	public void colisionJugadorDerecha(boolean colision) {
-
-		colisionJugadorDerecha = colision;
-
-	}
 
 	public void dibujar(Graphics g, int posicionX, int posicionY) {
 
