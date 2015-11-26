@@ -1,5 +1,6 @@
 package principal.entes.enemigos;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -37,36 +38,40 @@ public class Jefe {
 		private HojaSprites hs;
 
 		private BufferedImage imagenActual;
+		private BufferedImage imagenActual2;
 	
 		private Mapa mapa;
 		private int limitador = 0;
 		Jugador jugador;
 
 		private final int ANCHO = 30;
-		private final int ALTO = 11;
+		private final int ALTO = 32*2;
 		private int velocidadX = 1;
 		private int velocidadY = 1;
 		private Point posicionInicial;
 		private boolean colisionJugador = false;
 		private  ArrayList<Puerta[]> puertas;
+		Point posicion=new Point(0,0);
 
 
 		public Jefe(Mapa mapa, Point posicionInicial,ArrayList<Puerta[]> puertas) {
 
-			this.posicionInicial = posicionInicial;
+			this.posicion = posicionInicial;
 			this.mapa = mapa;
 			this.puertas=puertas;
-			hs = new HojaSprites("/imagenes/hojasPersonajes/ojo.png", Constantes.LADO_SPRITE, false);
+			hs = new HojaSprites("/imagenes/hojasPersonajes/boss.png", Constantes.LADO_SPRITE, false);
+			salud=1;
 
 		}
 
 		public void actualizar(int posicionX, int posicionY) {
-
+			
 			estaVivo();
 			actualizarColisiones(posicionX, posicionY);
+			movimiento(posicion);
 			if (estaVivo) {
-				movimiento(posicionInicial);
-
+				
+				
 			} else {
 
 				if (GestorPrincipal.obtenerAps() % 10 == 0) {
@@ -78,10 +83,10 @@ public class Jefe {
 
 		}
 
-		private void movimiento(Point posicionEnemigo) {
-			double x = posicionEnemigo.x;
-			double y = posicionEnemigo.y;
-
+		private void movimiento(Point posicion) {
+			double x = posicion.x;
+			double y = posicion.y;
+			velocidad=1;
 			if (colisionAbajo(velocidadY)) {
 				velocidadY = 0;
 			} else {
@@ -92,18 +97,24 @@ public class Jefe {
 			}
 			if (colisionDerecha(velocidadX) ||  enColisionDerechaPuerta(velocidadX)) {
 				velocidadX = -1;
-			}
-			if (colisionIzquierda(velocidadX) || enColisionIzquierdaPuerta(velocidadX)) {
+			}if (colisionIzquierda(velocidadX) || enColisionIzquierdaPuerta(velocidadX)) {
 				velocidadX = 1;
 			}
-			if (limitador >= 2) {
-				limitador = 0;
-				x += (double) velocidadX * velocidad;
-			} else {
-				limitador++;
+			
+			if(salud>=8){
+				velocidad=1;
+			}else if(salud>=5){
+				velocidad=1;
+			}else if(salud>=2){
+				velocidad=2;
+			}else{
+				velocidad=3;
 			}
-
-			posicionEnemigo.setLocation(x, y);
+			
+			x += (double) velocidadX * velocidad;
+		
+			
+			posicion.setLocation(x, y);
 		}
 
 		private void actualizarColisiones(final int posicionX, final int posicionY) {
@@ -111,17 +122,17 @@ public class Jefe {
 				colisionEnemigo.clear();
 			}
 			if (estaVivo) {
-				Rectangle arriba = new Rectangle(posicionInicial.x - posicionX - 2, posicionInicial.y - posicionY,
+				Rectangle arriba = new Rectangle(posicion.x - posicionX - 2, posicion.y - posicionY,
 						ANCHO + 5, 2);
 
-				Rectangle abajo = new Rectangle(posicionInicial.x - posicionX, posicionInicial.y - posicionY + ALTO - 2,
+				Rectangle abajo = new Rectangle(posicion.x - posicionX, posicion.y - posicionY + ALTO - 2,
 						ANCHO, 2);
 
-				Rectangle izquierda = new Rectangle(posicionInicial.x - posicionX, posicionInicial.y - posicionY + 2, 2,
-						ALTO - 2);
+				Rectangle izquierda = new Rectangle(posicion.x - posicionX, posicion.y - posicionY, 2,
+						ALTO);
 
-				Rectangle derecha = new Rectangle(posicionInicial.x - posicionX + ANCHO - 2, posicionInicial.y - posicionY
-						+ 2, 2, ALTO - 2);
+				Rectangle derecha = new Rectangle(posicion.x - posicionX + ANCHO - 2, posicion.y - posicionY
+						, 2, ALTO);
 
 				colisionEnemigo.add(arriba);
 				colisionEnemigo.add(abajo);
@@ -136,11 +147,11 @@ public class Jefe {
 				final Rectangle area = mapa.areasColision.get(r);
 
 				int origenX = area.x;
-				int origenY = area.y + velocidadY * (int) velocidad - 11 * (int) velocidad;
+				int origenY = area.y + velocidadY * (int) velocidad - 3 * (int) velocidad;
 
 				final Rectangle areaFutura = new Rectangle(origenX, origenY, Constantes.LADO_SPRITE, Constantes.LADO_SPRITE);
 
-				if (colisionEnemigo.get(0).intersects(areaFutura)) {
+				if (colisionEnemigo.get(1).intersects(areaFutura)) {
 					return true;
 				}
 			}
@@ -204,7 +215,6 @@ public class Jefe {
 			return false;
 		}
 		private boolean enColisionDerechaPuerta(final int velocidadX) {
-			
 			for (int r = 0; r < puertas.size(); r++) {
 				for(int i=0;i<puertas.get(r).length;i++){
 					if(!puertas.get(r)[i].obtenerColisiones().isEmpty()){
@@ -231,7 +241,7 @@ public class Jefe {
 
 		private void animar() {
 			int frecuenciaAnimacion = 10;
-			int limite = 6;
+			int limite = 4;
 
 			if (GestorPrincipal.obtenerAps() % frecuenciaAnimacion == 0) {
 
@@ -241,23 +251,18 @@ public class Jefe {
 				}
 				switch (animacion) {
 				case 0:
-					estadoAnimacion = 0;
+					estadoAnimacion = 1;
 					break;
 				case 1:
-					estadoAnimacion = 1;
+					estadoAnimacion = 3;
 					break;
 				case 2:
-					estadoAnimacion = 2;
-					break;
-				case 3:
-					estadoAnimacion = 2;
-					break;
-				case 4:
 					estadoAnimacion = 1;
 					break;
-				case 5:
-					estadoAnimacion = 0;
+				case 3:
+					estadoAnimacion = 5;
 					break;
+				
 				}
 				if (golpeado) {
 					estadoAnimacion = 3;
@@ -268,8 +273,8 @@ public class Jefe {
 			}
 
 			determinarMovimiento();
-
 			imagenActual = hs.obtenerSprite(direccion, estadoAnimacion).obtenerImagen();
+			imagenActual2 = hs.obtenerSprite(direccion, 0).obtenerImagen();
 		}
 
 		private void determinarMovimiento() {
@@ -290,18 +295,21 @@ public class Jefe {
 		}
 
 		public void dibujar(Graphics g, int posicionX, int posicionY) {
+	
 
 //			g.drawString("" + saludAnterior + " salud:" + salud, 10, 180);
 
-			g.drawImage(imagenActual, posicionInicial.x - posicionX - 10, posicionInicial.y - posicionY - 20, null);
-
-			// g.setColor(Color.GREEN);
-			//
-			// for (int i = 0; i < colisionEnemigo.size(); i++)
-			// if (!colisionEnemigo.isEmpty())
-			// g.drawRect(colisionEnemigo.get(i).x, colisionEnemigo.get(i).y,
-			// colisionEnemigo.get(i).width,
-			// colisionEnemigo.get(i).height);
+			g.drawImage(imagenActual, posicion.x - posicionX, posicion.y - posicionY+32, null);
+			g.drawImage(imagenActual2, posicion.x - posicionX, posicion.y - posicionY, null);
+		
+//			 g.setColor(Color.GREEN);
+//			 g.drawRect( posicion.x -posicionX, posicionY,10,10);
+//			 
+//			 for (int i = 0; i < colisionEnemigo.size(); i++)
+//			 if (!colisionEnemigo.isEmpty())
+//			 g.drawRect(colisionEnemigo.get(i).x, colisionEnemigo.get(i).y,
+//			 colisionEnemigo.get(i).width,
+//			 colisionEnemigo.get(i).height);
 
 		}
 

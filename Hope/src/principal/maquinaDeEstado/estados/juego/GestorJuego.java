@@ -11,6 +11,7 @@ import principal.entes.Objeto;
 import principal.entes.Plataforma;
 import principal.entes.Puerta;
 import principal.entes.enemigos.Enemigo;
+import principal.entes.enemigos.Jefe;
 import principal.mapas.Mapa;
 import principal.maquinaDeEstado.EstadoJuego;
 import principal.maquinaDeEstado.GestorEstados;
@@ -35,15 +36,14 @@ public class GestorJuego implements EstadoJuego {
 		this.ge = ge;
 
 		// System.out.println(audio.getAbsolutePath());
-		mapa = new Mapa("/mapas/mapa3");
+		mapa = new Mapa("/mapas/nivelsm");
 
 		iniciarJugador();
-		
 		generadorPlataformas();
 		generadorBloques();
 		generadorPuertas();
-		
 		generadorEnemigos();
+	
 
 
 		// try {
@@ -70,6 +70,7 @@ public class GestorJuego implements EstadoJuego {
 		generadorBloques();
 		generadorPuertas();
 		
+
 		generadorEnemigos();
 		
 	}
@@ -149,12 +150,16 @@ public class GestorJuego implements EstadoJuego {
 				if (3 == mapa.obtenerEnemigos()[x + y * this.mapa.obtenerAncho()]) {
 
 					final Point punto = new Point(puntoX, puntoY);
-					final Enemigo e = new Enemigo(mapa, punto,puertas);
-
+					final Enemigo e = new Enemigo(mapa, punto,puertas,3);
+					enemigos.add(e);
+				}else if(5 == mapa.obtenerEnemigos()[x + y * this.mapa.obtenerAncho()]){
+					final Point punto = new Point(puntoX, puntoY);
+					final Enemigo e = new Enemigo(mapa, punto,puertas,4);
 					enemigos.add(e);
 				}
 			}
 		}
+		
 
 		return enemigos;
 	}
@@ -195,7 +200,8 @@ public class GestorJuego implements EstadoJuego {
 		plataformas.clear();
 		bloques.clear();
 		corazon.clear();
-		
+		jugador.establecerPosicionX(0);
+		jugador.establecerPosicionY(0);
 		iniciarMapa(ruta, mapa.obtenerEntrada());
 		
 		jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
@@ -206,7 +212,7 @@ public class GestorJuego implements EstadoJuego {
 		generadorPlataformas();
 		generadorPuertas();
 		generadorBloques();
-		
+
 		generadorEnemigos();
 
 
@@ -237,7 +243,7 @@ public class GestorJuego implements EstadoJuego {
 				}
 			}
 		}
-
+			
 		if (!enemigos.isEmpty()) {
 			for (int i = 0; i < enemigos.size(); i++) {
 				enemigos.get(i).actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
@@ -269,6 +275,7 @@ public class GestorJuego implements EstadoJuego {
 	}
 
 	public void dibujar(Graphics g) {
+		
 
 		mapa.dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 
@@ -301,7 +308,7 @@ public class GestorJuego implements EstadoJuego {
 		for (int i = 0; i < bloques.size(); i++) {
 			bloques.get(i).dibujar(g, (int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 		}
-
+		
 		jugador.dibujar(g);
 
 		//
