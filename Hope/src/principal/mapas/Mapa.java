@@ -13,6 +13,8 @@ import principal.sprites.Sprite;
 
 public class Mapa {
 
+	private String ruta;
+	
 	private String partes[];
 
 	private final int ancho;
@@ -33,6 +35,7 @@ public class Mapa {
 	private final int[] enemigos;
 	private final String[] plataformas;
 	private final String[] puertas;
+	
 
 
 	public ArrayList<Rectangle> areasColision = new ArrayList<Rectangle>();
@@ -46,6 +49,7 @@ public class Mapa {
 			- Constantes.LADO_SPRITE / 2;
 
 	public Mapa(final String ruta) {
+		this.ruta=ruta;
 		String contenido = CargadorRecursos.leerArchivoTexto(ruta);
 
 		partes = contenido.split("\\*");
@@ -104,6 +108,7 @@ public class Mapa {
 
 	}
 	public Mapa(final String ruta,final Point entrada) {
+		this.ruta=ruta;
 		String contenido = CargadorRecursos.leerArchivoTexto(ruta);
 
 		partes = contenido.split("\\*");
@@ -164,6 +169,7 @@ public class Mapa {
 		zonaSalida = new Rectangle();
 
 	}
+	
 
 	
 	private Sprite[] asignarSprites(final String[] partesPaleta,
@@ -399,5 +405,8 @@ public class Mapa {
 	}
 	public String[] obtenerPuertas() {
 		return puertas;
+	}
+	public String obtenerRuta(){
+		return ruta;
 	}
 }

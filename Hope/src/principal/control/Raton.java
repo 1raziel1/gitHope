@@ -7,6 +7,8 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.SwingUtilities;
@@ -14,10 +16,12 @@ import javax.swing.SwingUtilities;
 import principal.graficos.SuperficieDibujo;
 import principal.herramientas.CargadorRecursos;
 
-public class Raton extends MouseAdapter{
+public class Raton extends MouseAdapter implements MouseListener{
+    
 
 	private final Cursor cursor;
 	private Point posicion;
+	private static boolean click=false;
 	
 	
 	public Raton(final SuperficieDibujo sd) {
@@ -32,8 +36,21 @@ public class Raton extends MouseAdapter{
 		
 		posicion=new Point();
 		actualizarPosicion(sd);
+		
 	}
+	public void mouseClicked(MouseEvent e) {
+    	click=true;
+    	
+    }
+	public void mouseReleased(MouseEvent e) {
+    	click=false;
+    	
+    }
+	
+
+	
 	public void actualizar(final SuperficieDibujo sd){
+		click=false;
 		actualizarPosicion(sd);
 	}
 	public void dibujar(Graphics g){
@@ -52,5 +69,11 @@ public class Raton extends MouseAdapter{
 
 	public Cursor ObtenerCursor() {
 		return this.cursor;
+	}
+	public Point obtenerPos(){
+		return posicion;
+	}
+	public boolean obtenerClick(){
+		return click;
 	}
 }

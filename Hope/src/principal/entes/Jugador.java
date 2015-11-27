@@ -20,7 +20,7 @@ public class Jugador {
 
 	private double velocidad = 1;
 
-	private int salud = 10;
+	private int salud = 1;
 
 	private int salto = 2;
 	private int decrementoSalto = 0;
@@ -40,6 +40,7 @@ public class Jugador {
 	private boolean callendo = false;
 	private boolean agachado = false;
 	private boolean bajoAgua = false;
+	private boolean correr = false;
 	private boolean moviendoBloque = false;
 
 	private int capacidadSalto = (int) ((48)/0.6);
@@ -103,65 +104,6 @@ public class Jugador {
 
 	private ArrayList<Rectangle> colisionHabilidades = new ArrayList<Rectangle>();
 
-	// public Jugador(Mapa mapa, ArrayList<Enemigo> enemigos) {
-	// posicionX = mapa.obtenerPosicionInicial().x;
-	// posicionY = mapa.obtenerPosicionInicial().y;
-	//
-	// direccion = 2;
-	//
-	// enMovimiento = false;
-	//
-	// hs = new HojaSprites("/imagenes/hojasPersonajes/1.png",
-	// Constantes.LADO_SPRITE, false);
-	// imagenActual = hs.obtenerSprite(0).obtenerImagen();
-	//
-	// animacion = 0;
-	// estado = 0;
-	//
-	// this.mapa = mapa;
-	// this.enemigos = enemigos;
-	// }
-
-	// public Jugador(Mapa mapa, ArrayList<Enemigo> enemigos,
-	// ArrayList<Plataforma> plataformas) {
-	// posicionX = mapa.obtenerPosicionInicial().x;
-	// posicionY = mapa.obtenerPosicionInicial().y;
-	//
-	// direccion = 2;
-	//
-	// enMovimiento = false;
-	//
-	// hs = new HojaSprites("/imagenes/hojasPersonajes/1.png",
-	// Constantes.LADO_SPRITE, false);
-	// imagenActual = hs.obtenerSprite(0).obtenerImagen();
-	//
-	// animacion = 0;
-	// estado = 0;
-	//
-	// this.mapa = mapa;
-	// this.enemigos = enemigos;
-	// this.plataformas = plataformas;
-	// }
-
-//	public Jugador(Mapa mapa, ArrayList<Enemigo> enemigos, ArrayList<Plataforma> plataformas, ArrayList<Bloque> bloques) {
-//		posicionX = mapa.obtenerPosicionInicial().x;
-//		posicionY = mapa.obtenerPosicionInicial().y;
-//
-//		direccion = 2;
-//
-//		enMovimiento = false;
-//
-//		hs = new HojaSprites("/imagenes/hojasPersonajes/1.png", Constantes.LADO_SPRITE, false);
-//		imagenActual = hs.obtenerSprite(0).obtenerImagen();
-//
-//		animacion = 0;
-//		estado = 0;
-//
-//		this.mapa = mapa;
-//		this.enemigos = enemigos;
-//		this.plataformas = plataformas;
-//		this.bloques = bloques;
-//	}
 	public Jugador(Mapa mapa, ArrayList<Enemigo> enemigos, ArrayList<Plataforma> plataformas, ArrayList<Bloque> bloques,ArrayList<Puerta[]> puertas) {
 		posicionX = mapa.obtenerPosicionInicial().x;
 		posicionY = mapa.obtenerPosicionInicial().y;
@@ -183,24 +125,6 @@ public class Jugador {
 		this.puertas=puertas;
 	}
 
-	// public Jugador(Mapa mapa) {
-	// posicionX = mapa.obtenerPosicionInicial().x;
-	// posicionY = mapa.obtenerPosicionInicial().y;
-	//
-	// direccion = 2;
-	//
-	// enMovimiento = false;
-	//
-	// hs = new HojaSprites("/imagenes/hojasPersonajes/1.png",
-	// Constantes.LADO_SPRITE, false);
-	// imagenActual = hs.obtenerSprite(0).obtenerImagen();
-	//
-	// animacion = 0;
-	// estado = 0;
-	//
-	// this.mapa = mapa;
-	// }
-
 	public void actualizar() {
 		cambiarAnimacionEstado();
 		enMovimiento = false;
@@ -216,7 +140,9 @@ public class Jugador {
 		}
 
 	}
-
+	public int obtenerSalud(){
+		return salud;
+	}
 	private void actualizarPlataforma() {
 		for (int i = 0; i < plataformas.size(); i++) {
 			if (enPlataforma) {
@@ -494,6 +420,13 @@ public class Jugador {
 				velocidadX = 1;
 			}
 		}
+		if(GestorControles.teclado.shift.estaPulsada()){
+			if(velocidadX==1){
+				velocidadX=2;
+			}else if(velocidadX==-1){
+				velocidadX=-2;
+			}
+		}
 		if (enPlataforma) {
 
 			velocidadX = velocidadX + plataformas.get(0).obtenerVelocidadX();
@@ -673,7 +606,7 @@ public class Jugador {
 			final Rectangle area = mapa.areasColision.get(r);
 
 			int origenX = area.x;
-			int origenY = area.y + 2 * (int) 2 - 3 * (int) 2;
+			int origenY = area.y + velocidadY * (int) velocidad - 3 * (int) velocidad;
 
 			final Rectangle areaFutura = new Rectangle(origenX, origenY, Constantes.LADO_SPRITE, Constantes.LADO_SPRITE);
 
@@ -1134,6 +1067,9 @@ public class Jugador {
 
 	public Rectangle[] obtenerLimitesJugador() {
 		return limitesJugador;
+	}
+	public void establecerSalud(int salud){
+		this.salud=salud;
 	}
 
 }

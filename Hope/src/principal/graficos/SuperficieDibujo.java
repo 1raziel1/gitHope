@@ -3,6 +3,7 @@ package principal.graficos;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
@@ -19,7 +20,7 @@ public class SuperficieDibujo extends Canvas {
 	private int ancho;
 	private int alto;
 
-	private Raton raton;
+	private static Raton raton;
 
 	public SuperficieDibujo(final int ancho, final int alto) {
 		this.ancho = ancho;
@@ -32,9 +33,10 @@ public class SuperficieDibujo extends Canvas {
 
 		setPreferredSize(new Dimension(ancho, alto));
 		addKeyListener(GestorControles.teclado);
+		addMouseListener(raton);
 		setFocusable(true);
 		requestFocus();
-
+		
 	}
 	public void actualizar(){
 		raton.actualizar(this);
@@ -59,9 +61,10 @@ public class SuperficieDibujo extends Canvas {
 		}
 		
 		ge.dibujar(g);
+		g.setFont(new Font("Arial", Font.PLAIN, 10));
 		g.drawString("FPS:"+GestorPrincipal.obtenerFps(), 20, 40);
-		g.drawString("APS:"+GestorPrincipal.obtenerAps(), 20, 50);
-		raton.dibujar(g);
+		//g.drawString("APS:"+GestorPrincipal.obtenerAps(), 20, 50);
+//		raton.dibujar(g);
 		
 		Toolkit.getDefaultToolkit().sync();
 
@@ -75,6 +78,9 @@ public class SuperficieDibujo extends Canvas {
 
 	public int obtenerAlto() {
 		return alto;
+	}
+	public Raton obtenerRaton(){
+		return raton;
 	}
 
 }

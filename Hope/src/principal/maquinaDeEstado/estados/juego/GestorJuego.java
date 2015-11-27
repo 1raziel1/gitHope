@@ -11,7 +11,6 @@ import principal.entes.Objeto;
 import principal.entes.Plataforma;
 import principal.entes.Puerta;
 import principal.entes.enemigos.Enemigo;
-import principal.entes.enemigos.Jefe;
 import principal.mapas.Mapa;
 import principal.maquinaDeEstado.EstadoJuego;
 import principal.maquinaDeEstado.GestorEstados;
@@ -22,6 +21,7 @@ public class GestorJuego implements EstadoJuego {
 	private final int MARGEN_Y = Constantes.ALTO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
 	private final GestorEstados ge;
 	private boolean abiertasE=false;
+	
 	Mapa mapa;
 	// File audio = new File("recursos/audio/temaPrincipalHope.wav");
 	Jugador jugador;
@@ -36,8 +36,8 @@ public class GestorJuego implements EstadoJuego {
 		this.ge = ge;
 
 		// System.out.println(audio.getAbsolutePath());
-		mapa = new Mapa("/mapas/nivelsm");
-
+		mapa = new Mapa("/mapas/nivel1");
+		
 		iniciarJugador();
 		generadorPlataformas();
 		generadorBloques();
@@ -193,6 +193,32 @@ public class GestorJuego implements EstadoJuego {
 
 		return plataformas;
 	}
+	public void continuar(){
+		jugador.establecerSalud(1);
+		recargarJuego(mapa.obtenerRuta());
+		
+	}
+	private void recargarJuego(String ruta) {
+		
+		enemigos.clear();
+		plataformas.clear();
+		bloques.clear();
+		corazon.clear();
+		
+		iniciarMapa(ruta);
+		
+		
+		iniciarJugador();
+		generadorPlataformas();
+		generadorPuertas();
+		generadorBloques();
+
+		generadorEnemigos();
+
+
+		// jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
+		// jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
+	}
 
 	private void recargarJuego() {
 		final String ruta = "/mapas/" + mapa.obtenerSiguienteMapa();
@@ -207,7 +233,7 @@ public class GestorJuego implements EstadoJuego {
 		jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
 		jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
 		
-		iniciarJugador();
+//		iniciarJugador();
 		
 		generadorPlataformas();
 		generadorPuertas();
@@ -228,12 +254,18 @@ public class GestorJuego implements EstadoJuego {
 	private void iniciarMapa(final String ruta, final Point entrada) {
 		mapa = new Mapa(ruta, entrada);
 	}
+	private void iniciarMapa(final String ruta) {
+		mapa = new Mapa(ruta);
+	}
 
 	public void actualizar() {
 		if (jugador.obtenerLIMITE_DERECHA().intersects(mapa.obtenerZonaSalida())) {
 			recargarJuego();
 		}
 		jugador.actualizar();
+		if(jugador.obtenerSalud()<=0){
+			ge.cambiarEstadoActual(1);
+		}
 		mapa.actualizar((int) jugador.obtenerPosicionX(), (int) jugador.obtenerPosicionY());
 		
 		if(!puertas.isEmpty()){
