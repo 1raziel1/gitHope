@@ -20,9 +20,11 @@ public class Jugador {
 
 	private double velocidad = 1;
 
-	private int salud = 1;
+	private int salud = 10;
 
 	private int salto = 2;
+	private int corrigeCol=0;
+	private int tempPosY=0;
 	private int decrementoSalto = 0;
 
 	private boolean enemigoGolpeado = false;
@@ -54,6 +56,7 @@ public class Jugador {
 	private HojaSprites hs;
 
 	private BufferedImage imagenActual;
+	private BufferedImage corazon;
 
 	private Mapa mapa;
 
@@ -61,15 +64,15 @@ public class Jugador {
 	private final int ALTO_JUGADOR = 28;
 
 	private final Rectangle LIMITE_ARRIBA = new Rectangle(Constantes.CENTRO_VENTANA_X - 5,
-			Constantes.CENTRO_VENTANA_Y - 12, ANCHO_JUGADOR, 2);
+			Constantes.CENTRO_VENTANA_Y - 12, ANCHO_JUGADOR, 3);
 	private final Rectangle LIMITE_ABAJO = new Rectangle(Constantes.CENTRO_VENTANA_X - 5,
-			Constantes.CENTRO_VENTANA_Y + 14, ANCHO_JUGADOR, 2);
+			Constantes.CENTRO_VENTANA_Y + 14, ANCHO_JUGADOR, 3);
 
 	private final Rectangle LIMITE_IZQUIERDA = new Rectangle(Constantes.CENTRO_VENTANA_X - 5,
-			Constantes.CENTRO_VENTANA_Y - 12, 1, ALTO_JUGADOR);
+			Constantes.CENTRO_VENTANA_Y - 12, 3, ALTO_JUGADOR);
 
 	private final Rectangle LIMITE_DERECHA = new Rectangle(Constantes.CENTRO_VENTANA_X + 5,
-			Constantes.CENTRO_VENTANA_Y - 12, 1, ALTO_JUGADOR);
+			Constantes.CENTRO_VENTANA_Y - 12, 3, ALTO_JUGADOR);
 
 	private final Rectangle[] limitesJugador = { LIMITE_ARRIBA, LIMITE_ABAJO, LIMITE_IZQUIERDA, LIMITE_DERECHA };
 	
@@ -78,15 +81,15 @@ public class Jugador {
 	
 	//Agachado
 	private final Rectangle LIMITE_ARRIBA_AGACHADO = new Rectangle(Constantes.CENTRO_VENTANA_X-15,
-			Constantes.CENTRO_VENTANA_Y , ANCHO_JUGADOR+20, 2);
+			Constantes.CENTRO_VENTANA_Y , ANCHO_JUGADOR+20, 3);
 	private final Rectangle LIMITE_ABAJO_AGACHADO = new Rectangle(Constantes.CENTRO_VENTANA_X-15,
-			Constantes.CENTRO_VENTANA_Y + 14, ANCHO_JUGADOR+20, 2);
+			Constantes.CENTRO_VENTANA_Y + 14, ANCHO_JUGADOR+20, 3);
 
 	private final Rectangle LIMITE_IZQUIERDA_AGACHADO = new Rectangle(Constantes.CENTRO_VENTANA_X - 15,
-			Constantes.CENTRO_VENTANA_Y, 1, ALTO_JUGADOR-15);
+			Constantes.CENTRO_VENTANA_Y, 3, ALTO_JUGADOR-15);
 
 	private final Rectangle LIMITE_DERECHA_AGACHADO = new Rectangle(Constantes.CENTRO_VENTANA_X + 15,
-			Constantes.CENTRO_VENTANA_Y , 1, ALTO_JUGADOR-15);
+			Constantes.CENTRO_VENTANA_Y , 3, ALTO_JUGADOR-15);
 
 	private final Rectangle[] limitesJugadorAgachado = { LIMITE_ARRIBA_AGACHADO, LIMITE_ABAJO_AGACHADO, LIMITE_IZQUIERDA_AGACHADO, LIMITE_DERECHA_AGACHADO };
 	
@@ -117,12 +120,33 @@ public class Jugador {
 
 		animacion = 0;
 		estado = 0;
-
+		corazon=new HojaSprites("/imagenes/hojasPersonajes/objetos.png",Constantes.LADO_SPRITE,false).obtenerSprite(0).obtenerImagen();
 		this.mapa = mapa;
 		this.enemigos = enemigos;
 		this.plataformas = plataformas;
 		this.bloques = bloques;
 		this.puertas=puertas;
+	}
+	public Jugador(Mapa mapa, ArrayList<Enemigo> enemigos, ArrayList<Plataforma> plataformas, ArrayList<Bloque> bloques,ArrayList<Puerta[]> puertas,int salud) {
+		posicionX = mapa.obtenerPosicionInicial().x;
+		posicionY = mapa.obtenerPosicionInicial().y;
+
+		direccion = 2;
+
+		enMovimiento = false;
+
+		hs = new HojaSprites("/imagenes/hojasPersonajes/1.png", Constantes.LADO_SPRITE, false);
+		imagenActual = hs.obtenerSprite(0).obtenerImagen();
+
+		animacion = 0;
+		estado = 0;
+		corazon=new HojaSprites("/imagenes/hojasPersonajes/objetos.png",Constantes.LADO_SPRITE,false).obtenerSprite(0).obtenerImagen();
+		this.mapa = mapa;
+		this.enemigos = enemigos;
+		this.plataformas = plataformas;
+		this.bloques = bloques;
+		this.puertas=puertas;
+		this.salud=salud;
 	}
 
 	public void actualizar() {
@@ -531,7 +555,6 @@ public class Jugador {
 			} else {
 				callendo = false;
 			}
-
 		}
 
 		return velocidadY;
@@ -559,8 +582,22 @@ public class Jugador {
 			}
 			if (velocidadY >= 1 && !enColisionAbajo(velocidadY) && !enColisionAbajoBloque(velocidadY)) {
 				posicionY += velocidadY * velocidad;
+			}else{
+				
+				if(posicionY % 2 !=0){
+					
+					if(tempPosY==(int)posicionY){
+						corrigeCol++;
+					}else{
+						tempPosY=(int)posicionY;
+						corrigeCol=0;
+					}		
+					if(corrigeCol>=20){
+						posicionY+=1;
+						corrigeCol=0;
+					}
+				}
 			}
-
 		} else {
 			enMovimiento = false;
 		}
@@ -675,7 +712,7 @@ public class Jugador {
 
 				int origenX = e.x;
 
-				int origenY = e.y + velocidadY * (int) velocidad - 5 * (int) velocidad;
+				int origenY = e.y + velocidadY * (int) velocidad - 3 * (int) velocidad;
 
 				final Rectangle areaFutura = new Rectangle(origenX, origenY, e.width, e.height);
 
@@ -880,7 +917,7 @@ public class Jugador {
 
 	public void recibirDano() {
 		int frecuencia = 10;
-		int limite = 3;
+		int limite = 5;
 		if (enemigoGolpeado) {
 			if (golpeandoEnemigo <= 3) {
 				velocidadY = -4;
@@ -973,9 +1010,9 @@ public class Jugador {
 
 	private void cambiarDireccionEstado(final int velocidadX, final int velocidadY) {
 
-		if (velocidadX == -1) {
+		if (velocidadX <= -1) {
 			direccion = 3;
-		} else if (velocidadX == 1) {
+		} else if (velocidadX >= 1) {
 			direccion = 2;
 		}
 		if (enColisionAgua(2) && direccion <= 3) {
@@ -1021,9 +1058,12 @@ public class Jugador {
 		final int centroX = Constantes.ANCHO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
 
 		final int centroY = Constantes.ALTO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
-
-		g.setColor(Color.RED);
-		g.drawString("coor: " + posicionX+"-"+posicionY, 20, 60);
+		g.setColor(Color.gray);
+		g.fillRect(20, 48, 28, 15);
+		g.setColor(Color.WHITE);
+		g.drawString(""+ salud, 33, 60);
+		g.drawImage(corazon, 12, 40, null);
+	
 
 		g.drawImage(imagenActual, centroX, centroY, null);
 		if (!colisionHabilidades.isEmpty())
@@ -1070,6 +1110,9 @@ public class Jugador {
 	}
 	public void establecerSalud(int salud){
 		this.salud=salud;
+	}
+	public void cojerCorazon(int salud){
+		this.salud+=salud;
 	}
 
 }

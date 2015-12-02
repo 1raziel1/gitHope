@@ -5,6 +5,8 @@ import principal.graficos.Ventana;
 import principal.maquinaDeEstado.GestorEstados;
 
 public class GestorPrincipal {
+	
+	
 
 	private boolean enFuncionamiento = false;
 	private String titulo;
@@ -23,6 +25,7 @@ public class GestorPrincipal {
 		this.alto = alto;
 		this.ancho = ancho;
 	}
+
 
 	public static void main(String[] args) {
 		GestorPrincipal gp = new GestorPrincipal("Hope",

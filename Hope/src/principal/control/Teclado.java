@@ -10,7 +10,9 @@ public class Teclado implements KeyListener {
 	public Tecla izquierda = new Tecla();
 	public Tecla derecha = new Tecla();
 	public Tecla espacio = new Tecla();
+	public Tecla f3 = new Tecla();
 	public Tecla shift = new Tecla();
+	public Tecla p = new Tecla();
 
 	public Tecla j = new Tecla();
 
@@ -36,6 +38,12 @@ public class Teclado implements KeyListener {
 			break;
 		case KeyEvent.VK_SHIFT:
 			shift.teclaPulsada();
+			break;
+		case KeyEvent.VK_F3:
+			f3.teclaPulsada();
+			break;
+		case KeyEvent.VK_P:
+			p.teclaPulsada();
 			break;
 		case KeyEvent.VK_ESCAPE:
 			System.exit(0);
@@ -65,6 +73,12 @@ public class Teclado implements KeyListener {
 			break;
 		case KeyEvent.VK_SHIFT:
 			shift.teclaLiberada();
+			break;
+		case KeyEvent.VK_F3:
+			f3.teclaLiberada();
+			break;
+		case KeyEvent.VK_P:
+			p.teclaLiberada();
 			break;
 		}
 	}

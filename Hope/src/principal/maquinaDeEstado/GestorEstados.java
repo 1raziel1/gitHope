@@ -7,6 +7,7 @@ import principal.graficos.SuperficieDibujo;
 import principal.maquinaDeEstado.estados.juego.GestorJuego;
 import principal.maquinaDeEstado.estados.menuinicial.GestorMenuInicial;
 import principal.maquinaDeEstado.estados.menujuego.GestorMenu;
+import principal.maquinaDeEstado.estados.menujuego.GestorMenuPausa;
 
 public class GestorEstados {
 
@@ -18,15 +19,17 @@ public class GestorEstados {
 		iniciarEstados();
 		gm = new GestorMenu(this,sd.obtenerRaton());
 		estados[1]=gm;
-	
+		estados[2]=new GestorMenuInicial(this,sd.obtenerRaton());
+		estados[3]=new GestorMenuPausa(this,sd.obtenerRaton());
 		iniciarEstadoActual();
 	
 	}
 
 	private void iniciarEstados() {
-		estados = new EstadoJuego[3];
+		estados = new EstadoJuego[4];
 		estados[0] = new GestorJuego(this);
-		estados[2]=new GestorMenuInicial(this);
+		
+		
 		
 	}
 	public void cargarMapa(String url,Point puntoEntrada){
@@ -63,4 +66,5 @@ public class GestorEstados {
 		return estadoActual;
 	}
 	
+
 }

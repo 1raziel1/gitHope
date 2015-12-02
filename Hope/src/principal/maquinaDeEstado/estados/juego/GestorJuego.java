@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import principal.Constantes;
+import principal.control.GestorControles;
 import principal.entes.Bloque;
 import principal.entes.Jugador;
 import principal.entes.Objeto;
@@ -20,7 +21,7 @@ public class GestorJuego implements EstadoJuego {
 	private final int MARGEN_X = Constantes.ANCHO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
 	private final int MARGEN_Y = Constantes.ALTO_JUEGO / 2 - Constantes.LADO_SPRITE / 2;
 	private final GestorEstados ge;
-	private boolean abiertasE=false;
+	private boolean abiertasE=false,pausa=false;
 	
 	Mapa mapa;
 	// File audio = new File("recursos/audio/temaPrincipalHope.wav");
@@ -216,11 +217,11 @@ public class GestorJuego implements EstadoJuego {
 		generadorEnemigos();
 
 
-		// jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
-		// jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
+		 jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
+		 jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
 	}
 
-	private void recargarJuego() {
+	private void cargarSiguienteMapa() {
 		final String ruta = "/mapas/" + mapa.obtenerSiguienteMapa();
 		enemigos.clear();
 		plataformas.clear();
@@ -232,8 +233,8 @@ public class GestorJuego implements EstadoJuego {
 		
 		jugador.establecerPosicionX(mapa.obtenerPosicionInicial().x);
 		jugador.establecerPosicionY(mapa.obtenerPosicionInicial().y);
-		
-//		iniciarJugador();
+		int salud =jugador.obtenerSalud();
+		iniciarJugador(salud);
 		
 		generadorPlataformas();
 		generadorPuertas();
@@ -248,8 +249,12 @@ public class GestorJuego implements EstadoJuego {
 
 	private void iniciarJugador() {
 		jugador = new Jugador(mapa, enemigos, plataformas, bloques,puertas);
-
 	}
+	
+	private void iniciarJugador(int salud) {
+		jugador = new Jugador(mapa, enemigos, plataformas, bloques,puertas,salud);
+	}
+	
 
 	private void iniciarMapa(final String ruta, final Point entrada) {
 		mapa = new Mapa(ruta, entrada);
@@ -259,8 +264,14 @@ public class GestorJuego implements EstadoJuego {
 	}
 
 	public void actualizar() {
+
+		if(GestorControles.teclado.p.estaPulsada()){
+			ge.cambiarEstadoActual(3);
+		}
+		
+		
 		if (jugador.obtenerLIMITE_DERECHA().intersects(mapa.obtenerZonaSalida())) {
-			recargarJuego();
+			cargarSiguienteMapa();
 		}
 		jugador.actualizar();
 		if(jugador.obtenerSalud()<=0){
@@ -300,9 +311,12 @@ public class GestorJuego implements EstadoJuego {
 				if (jugador.obtenerLIMITE_DERECHA().intersects(corazon.get(i).obtenerColision())
 						|| jugador.obtenerLIMITE_IZQUIERDA().intersects(corazon.get(i).obtenerColision())) {
 					corazon.remove(i);// cojer corazon
+					jugador.cojerCorazon(1);
 				}
 			}
 		}
+	
+		
 
 	}
 

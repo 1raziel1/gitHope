@@ -19,6 +19,7 @@ public class SuperficieDibujo extends Canvas {
 	private static final long serialVersionUID = -6227038142688953660L;
 	private int ancho;
 	private int alto;
+	private boolean mostrarFps=false;
 
 	private static Raton raton;
 
@@ -40,6 +41,11 @@ public class SuperficieDibujo extends Canvas {
 	}
 	public void actualizar(){
 		raton.actualizar(this);
+		if(GestorControles.teclado.f3.estaPulsada()){
+			mostrarFps=true;
+		}else if(GestorControles.teclado.f3.estaPulsada()&& mostrarFps){
+			mostrarFps=false;
+		}
 	}
 
 	public void dibujar(final GestorEstados ge) {
@@ -62,7 +68,10 @@ public class SuperficieDibujo extends Canvas {
 		
 		ge.dibujar(g);
 		g.setFont(new Font("Arial", Font.PLAIN, 10));
-		g.drawString("FPS:"+GestorPrincipal.obtenerFps(), 20, 40);
+		if(mostrarFps){
+			g.drawString("FPS:"+GestorPrincipal.obtenerFps(), 20, 40);
+		}
+		
 		//g.drawString("APS:"+GestorPrincipal.obtenerAps(), 20, 50);
 //		raton.dibujar(g);
 		

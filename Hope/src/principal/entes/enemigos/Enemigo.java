@@ -141,16 +141,16 @@ public class Enemigo {
 		}
 		if (estaVivo) {
 			Rectangle arriba = new Rectangle(posicionInicial.x - posicionX - 2, posicionInicial.y - posicionY,
-					ANCHO + 5, 2);
+					ANCHO + 5, 3);
 
-			Rectangle abajo = new Rectangle(posicionInicial.x - posicionX, posicionInicial.y - posicionY + ALTO - 2,
-					ANCHO, 2);
+			Rectangle abajo = new Rectangle(posicionInicial.x - posicionX, posicionInicial.y - posicionY + ALTO - 3,
+					ANCHO, 3);
 
-			Rectangle izquierda = new Rectangle(posicionInicial.x - posicionX, posicionInicial.y - posicionY + 2, 2,
+			Rectangle izquierda = new Rectangle(posicionInicial.x - posicionX, posicionInicial.y - posicionY + 2, 3,
 					ALTO - 2);
 
 			Rectangle derecha = new Rectangle(posicionInicial.x - posicionX + ANCHO - 2, posicionInicial.y - posicionY
-					+ 2, 2, ALTO - 2);
+					+ 2, 3, ALTO - 2);
 
 			colisionEnemigo.add(arriba);
 			colisionEnemigo.add(abajo);
